@@ -20,21 +20,8 @@ public class EightPuzzle {
 	 * @param s0
 	 * @return a string specified in the javadoc below
 	 */
-
-
-
-
-
-	//public static String solve8Puzzle(State s0)
-	public static String solve8Puzzle(int[][] test) {
-
-
-
-
-
-
-
-		// TODO 
+	public static String solve8Puzzle(State s0) {
+		// TODO
 		String solutionString = "";
 		
 		/* 
@@ -52,33 +39,31 @@ public class EightPuzzle {
 		int[] flattenedMatrix = new int[8];
 		int flatIdx = 0;
 
+		// Flattening the matrix to a vector
 		for(int i = 0; i < 3; i++) {
 			for(int j = 0; j < 3; j++) {
-
-
-
-
-
-
-				if(test[i][j] != 0){
-				//if(s0.board[i][j] != 0) {
-					flattenedMatrix[flatIdx] = test[i][j];
-					//flattenedMatrix[flatIdx] = s0.board[i][j];
+				if(s0.board[i][j] != 0) {
+					flattenedMatrix[flatIdx] = s0.board[i][j];
+					flatIdx++;
 				}
+			}
+		}
 
+		// Counting the inversions
+		for(int i = 0; i < 7; i++) {
+			int currVal = flattenedMatrix[i];
 
-
-
-
-
-
+			for(int j = i + 1; j < 8; j++) {
+				if(currVal > flattenedMatrix[j]) {
+					inversions++;
+				}
 			}
 		}
 
 		// Odd number of inversions means it is NOT solvable
 		if(((inversions - goalInversions) % 2) != 0) {
 			solutionString = "No solution exists for the following initial state:\n\n";
-			//solutionString += s0.toString();
+			solutionString += s0.toString();
 		}
 
 		/* 
@@ -90,19 +75,7 @@ public class EightPuzzle {
 			String[] moves = new String[3]; 
 			
 			for (int i = 0; i < 3; i++) {
-
-
-
-
-
-
-				//moves[i] = AStar(s0, h[i]); 
-
-
-
-
-
-
+				moves[i] = AStar(s0, h[i]);
 			}
 			
 			/*
@@ -111,22 +84,7 @@ public class EightPuzzle {
 			*/
 		}
 
-
-
-
-
-
-		solutionString = "";
-		for(int i = 0; i < 8; i++) {
-			solutionString += flattenedMatrix[i] + ", ";
-		}
-
-
-
-
-
-
-		return solutionString; 
+		return solutionString;
 	}
 	
 	/**
