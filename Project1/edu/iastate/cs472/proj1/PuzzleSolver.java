@@ -27,8 +27,20 @@ public class PuzzleSolver {
 		// Read an initial board configuration from a file. 
 
 		// Call EightPuzzle.solve8puzzle() to solve the puzzle.
+
+
+
+
+
+
 		int[][] TEST = {{1, 2, 3},{4, 5, 6},{0, 7, 8}};
 		System.out.println(EightPuzzle.solve8Puzzle(TEST));
+
+
+
+
+
+		
 		
 		// You may make it interactive by repeatedly accepting puzzle files and print out solutions. (No extra credit but good for debugging and for the user.)
 		String fileNames[] = new String[] {"8Puzzle.txt"}; 

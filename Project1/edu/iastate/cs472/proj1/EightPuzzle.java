@@ -20,8 +20,20 @@ public class EightPuzzle {
 	 * @param s0
 	 * @return a string specified in the javadoc below
 	 */
+
+
+
+
+
 	//public static String solve8Puzzle(State s0)
 	public static String solve8Puzzle(int[][] test) {
+
+
+
+
+
+
+
 		// TODO 
 		String solutionString = "";
 		
@@ -42,11 +54,24 @@ public class EightPuzzle {
 
 		for(int i = 0; i < 3; i++) {
 			for(int j = 0; j < 3; j++) {
+
+
+
+
+
+
 				if(test[i][j] != 0){
 				//if(s0.board[i][j] != 0) {
 					flattenedMatrix[flatIdx] = test[i][j];
 					//flattenedMatrix[flatIdx] = s0.board[i][j];
 				}
+
+
+
+
+
+
+
 			}
 		}
 
@@ -65,7 +90,19 @@ public class EightPuzzle {
 			String[] moves = new String[3]; 
 			
 			for (int i = 0; i < 3; i++) {
+
+
+
+
+
+
 				//moves[i] = AStar(s0, h[i]); 
+
+
+
+
+
+
 			}
 			
 			/*
@@ -74,10 +111,20 @@ public class EightPuzzle {
 			*/
 		}
 
+
+
+
+
+
 		solutionString = "";
 		for(int i = 0; i < 8; i++) {
 			solutionString += flattenedMatrix[i] + ", ";
 		}
+
+
+
+
+
 
 		return solutionString; 
 	}
