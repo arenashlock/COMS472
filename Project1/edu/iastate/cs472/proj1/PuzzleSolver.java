@@ -24,13 +24,14 @@ public class PuzzleSolver {
 	 * @throws IllegalArgumentException if the initial state from the file is not in the correct format
 	 */
 	public static void main(String[] args) throws FileNotFoundException, IllegalArgumentException {	
-		// Read an initial board configuration from a file. 
+		// Read an initial board configuration from a file.
+		State initial_board = new State("edu/iastate/cs472/proj1/8Puzzle.txt");
 
 		// Call EightPuzzle.solve8puzzle() to solve the puzzle.
 		
 
 		// You may make it interactive by repeatedly accepting puzzle files and print out solutions. (No extra credit but good for debugging and for the user.)
-		String fileNames[] = new String[] {"8Puzzle.txt"}; 
+		String fileNames[] = new String[] {"edu/iastate/cs472/proj1/8Puzzle.txt"};
 		
 		// TODO 
 	}

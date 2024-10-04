@@ -45,8 +45,7 @@ public class State implements Cloneable, Comparable<State> {
 	 *     b) Set move to null and numMoves to zero.
 	 * 
 	 * @param board
-	 * @throws IllegalArgumentException		if board is not a 3X3 array or its nine entries are 
-	 * 										not respectively the digits 0, 1, ..., 8. 
+	 * @throws IllegalArgumentException		if board is not a 3X3 array or its nine entries are not respectively the digits 0, 1, ..., 8.
 	 */
     public State(int[][] board) throws IllegalArgumentException {
     	// TODO 
