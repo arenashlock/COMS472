@@ -1,6 +1,8 @@
 package edu.iastate.cs472.proj1;
 
 import java.io.FileNotFoundException;
+import java.io.File;
+import java.util.Scanner;
 
 /**
  * @author Aren Ashlock
@@ -25,14 +27,34 @@ public class PuzzleSolver {
 	 */
 	public static void main(String[] args) throws FileNotFoundException, IllegalArgumentException {	
 		// Read an initial board configuration from a file.
-		System.out.println(args[0]);
+		State fileState = new State(args[0]);
+			
+
+
+
+
+		for(int i = 0; i < 3; i++) {
+			for(int j = 0; j < 3; j++) {
+				System.out.print(fileState.board[i][j] + " ");
+			}
+
+			System.out.println();
+		}
+
+
+
+		
 
 		// Call EightPuzzle.solve8puzzle() to solve the puzzle.
-		
+		//EightPuzzle.solve8Puzzle(fileState);
 
-		// You may make it interactive by repeatedly accepting puzzle files and print out solutions. (No extra credit but good for debugging and for the user.)
-		String fileNames[] = new String[] {"edu/iastate/cs472/proj1/8Puzzle.txt"};
-		
-		// TODO 
+
+
+
+
+
+
+
+		System.out.println("Code complete");
 	}
 }

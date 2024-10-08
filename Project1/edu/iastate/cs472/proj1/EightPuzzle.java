@@ -29,41 +29,8 @@ public class EightPuzzle {
 	       state:" and follows with a blank line and then what would be the output from a call s0.toString(). See the end of 
 		   Section 6 in the project description for an example. 
 		*/
-
-		// In the goal state, there are 7 inversions
-		int goalInversions = 7;
-		// We will count the number of inversions in the starting state
-		int inversions = 0;
-
-		// Flatten the matrix to make counting inversions easier
-		int[] flattenedMatrix = new int[8];
-		int flatIdx = 0;
-
-		// Flattening the matrix to a vector
-		for(int i = 0; i < 3; i++) {
-			for(int j = 0; j < 3; j++) {
-				if(s0.board[i][j] != 0) {
-					flattenedMatrix[flatIdx] = s0.board[i][j];
-					flatIdx++;
-				}
-			}
-		}
-
-		// Counting the inversions
-		for(int i = 0; i < 7; i++) {
-			int currVal = flattenedMatrix[i];
-
-			for(int j = i + 1; j < 8; j++) {
-				if(currVal > flattenedMatrix[j]) {
-					inversions++;
-				}
-			}
-		}
-
-		// Odd number of inversions means it is NOT solvable
-		if(((inversions - goalInversions) % 2) != 0) {
-			solutionString = "No solution exists for the following initial state:\n\n";
-			solutionString += s0.toString();
+		if(!s0.solvable()) {
+			solutionString = "No solution exists for the following initial state:\n\n" + s0.toString();
 		}
 
 		/* 

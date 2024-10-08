@@ -1,6 +1,17 @@
 package edu.iastate.cs472.proj1;
 
 import java.io.FileNotFoundException;
+import java.io.File;
+import java.util.Scanner;
+
+
+
+
+import java.lang.Cloneable;
+
+
+
+
 
 /**
  * @author Aren Ashlock
@@ -48,7 +59,29 @@ public class State implements Cloneable, Comparable<State> {
 	 * @throws IllegalArgumentException		if board is not a 3X3 array or its nine entries are not respectively the digits 0, 1, ..., 8.
 	 */
     public State(int[][] board) throws IllegalArgumentException {
-    	// TODO 
+    	// TODO
+        if(board.length != 3 || board[0].length != 3) {
+            throw new IllegalArgumentException("Dimensions are incorrect, it should be a 3X3 array");
+        }
+        else {
+            for(int i = 0; i < 3; i++) {
+                for(int j = 0; j < 3; j++) {
+                    if(board[i][j] < 0 || board[i][j] > 8) {
+                        throw new IllegalArgumentException("Array contains an element not within 0,...,8");
+                    }
+                    else {
+                        this.board[i][j] = board[i][j];
+                    }
+                }
+            }
+        }
+
+        previous = null;
+        next = null;
+        predecessor = null;
+
+        move = null;
+        numMoves = 0;
 	}
     
     
@@ -64,8 +97,51 @@ public class State implements Cloneable, Comparable<State> {
      * @throws FileNotFoundException
      * @throws IllegalArgumentException  if the file content does not meet the above requirements. 
      */
-    public State (String inputFileName) throws FileNotFoundException, IllegalArgumentException {
-    	// TODO 
+    public State(String inputFileName) throws FileNotFoundException, IllegalArgumentException {
+    	// Find the file (throw an exception if it cannot be found)
+        try {
+            // Initialize the file tools
+            File inputFile = new File(inputFileName);
+            Scanner fileScanner = new Scanner(inputFile);
+
+            // Construct the array
+            board = new int[3][3];
+
+            // Iterate through the board (checking that the dimensions and values are correct)
+            for(int i = 0; fileScanner.hasNextLine(); i++) {
+                if(i == 3) {
+                    throw new IllegalArgumentException("Dimensions are incorrect, it should be a 3X3 array");
+                }
+                else {
+                    String fileLine = fileScanner.nextLine();
+                    Scanner lineScanner = new Scanner(fileLine);
+
+                    for(int j = 0; lineScanner.hasNextInt(); j++) {
+                        if(j == 3) {
+                            throw new IllegalArgumentException("Dimensions are incorrect, it should be a 3X3 array");
+                        }
+                        else {
+                            int boardValue = lineScanner.nextInt();
+
+                            if(boardValue < 0 || boardValue > 8) {
+                                throw new IllegalArgumentException("Array contains an element not within 0,...,8");
+                            }
+                            else {
+                                board[i][j] = boardValue;
+                            }
+                        }
+                    }
+
+                    lineScanner.close();
+                }
+            }
+
+            // TODO - ensure no duplicate values are found!
+
+            fileScanner.close();
+        } catch (FileNotFoundException e) {
+            throw new FileNotFoundException("File not found, run this code again with a new filepath");
+        }
 	}
     
     
@@ -102,8 +178,35 @@ public class State implements Cloneable, Comparable<State> {
      * @return true if the puzzle starting in this state can be rearranged into the goal state.
      */
     public boolean solvable() {
-    	// TODO 
-    	return false; 
+        // Flatten the matrix to make inversion counting easier
+        int[] solvableArray = flattenMatrix(board);
+
+        // In the goal state, there are 7 inversions
+		int goalInversions = 7;
+		// We will count the number of inversions in the starting state
+		int inversions = 0;
+
+        // Counting the inversions
+		for(int i = 0; i < 9; i++) {
+			int currVal = solvableArray[i];
+
+            // We don't care about the blank space
+            if(currVal != 0) {
+                for(int j = i + 1; j < 9; j++) {
+                    if((currVal > solvableArray[j]) && (solvableArray[j] != 0)) {
+                        inversions++;
+                    }
+                }
+            }
+		}
+    
+        // Odd number of inversions means it is NOT solvable
+		if(((inversions - goalInversions) % 2) != 0) {
+			return false;
+		}
+        else { // Even number of inversions
+            return true;
+        }
     }
     
     
@@ -117,8 +220,17 @@ public class State implements Cloneable, Comparable<State> {
      * @return
      */
     public boolean isGoalState() {
-    	// TODO 
-    	return false; 
+        int[][] goalState = {{1, 2, 3}, {8, 0 ,4}, {7, 6, 5}};
+
+        for(int i = 0; i < 3; i++) {
+            for(int j = 0; j < 3; j++) {
+                if(board[i][j] != goalState[i][j]) {
+                    return false;
+                }
+            }
+        }
+
+    	return true; 
     }
     
     
@@ -136,8 +248,27 @@ public class State implements Cloneable, Comparable<State> {
      */
     @Override 
     public String toString() {
-    	// TODO 
-    	return null; 
+        String stateString = "";
+
+        for(int i = 0; i < 3; i++) {
+            for(int j = 0; j < 3; j++) {
+                // Character/number control
+                if(board[i][j] != 0) {
+                    stateString += board[i][j];
+                } else {
+                    stateString += " ";
+                }
+
+                // Whitespace control
+                if((j == 2) && (i < 2)) {
+                    stateString += "\n";
+                } else {
+                    stateString += " ";
+                }
+            }
+        }
+
+    	return stateString; 
     }
     
     
@@ -147,9 +278,23 @@ public class State implements Cloneable, Comparable<State> {
      * The method is called by SuccessorState(); 
      */
     @Override
-    public Object clone() {
-    	// TODO 
-    	return null; 
+    public Object clone() throws CloneNotSupportedException {
+        Object clonedObject = super.clone();
+
+        State clonedState = (State) clonedObject;
+
+        clonedState.board = new int[3][3];
+        for(int i = 0; i < 3; i++) {
+            for(int j = 0; j < 3; j++) {
+                clonedState.board[i][j] = board[i][j];
+            }
+        }
+
+        clonedState.previous = null;
+        clonedState.next = null;
+        clonedState.predecessor = null;
+
+    	return clonedState; 
     }
   
 
@@ -228,4 +373,38 @@ public class State implements Cloneable, Comparable<State> {
 		// TODO 
 		return 0; 
 	}
+
+    /**
+     * Helper function added to flatten a board from a matrix to an array. Meant to make it easier to determine lexicographical order.
+     */
+    public int[] flattenBoard() {
+        int[] matrixToArray = new int[9];
+        int idx = 0;
+
+        for(int i = 0; i < 3; i++) {
+			for(int j = 0; j < 3; j++) {
+				matrixToArray[idx] = board[i][j];
+				idx++;
+			}
+		}
+
+        return matrixToArray;
+    }
+
+    /**
+     * Helper function added to flatten a matrix. Meant to make it easier for solvability.
+     */
+    public int[] flattenMatrix(int[][] matrix) {
+        int[] matrixToArray = new int[9];
+        int idx = 0;
+
+        for(int i = 0; i < 3; i++) {
+			for(int j = 0; j < 3; j++) {
+				matrixToArray[idx] = matrix[i][j];
+				idx++;
+			}
+		}
+
+        return matrixToArray;
+    }
 }

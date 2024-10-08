@@ -1,2 +1,3 @@
 To compile, type "javac -d . edu/iastate/cs472/proj1/*.java"
 To run, type "java edu.iastate.cs472.proj1.PuzzleSolver [filepath of puzzle txt file]"
+    For me, the filepath is just "8Puzzle.txt"

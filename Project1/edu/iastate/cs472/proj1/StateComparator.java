@@ -23,7 +23,19 @@ import java.util.Comparator;
 public class StateComparator implements Comparator<State> {
 	@Override
 	public int compare(State s1, State s2) {
-		// TODO 
+		// TODO
+		int[] flattenedS1 = s1.flattenBoard();
+		int[] flattenedS2 = s2.flattenBoard();
+
+		for(int i = 0; i < 9; i++) {
+			if(flattenedS1[i] < flattenedS2[i]) {
+				return -1;
+			}
+			else if(flattenedS1[i] > flattenedS2[i]) {
+				return 1;
+			}
+		}
+
 	    return 0;
 	}  		
 }
