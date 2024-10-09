@@ -32,29 +32,16 @@ public class PuzzleSolver {
 
 
 
-
-		for(int i = 0; i < 3; i++) {
-			for(int j = 0; j < 3; j++) {
-				System.out.print(fileState.board[i][j] + " ");
-			}
-
-			System.out.println();
-		}
+		// JUST FOR TESTING THE DOUBLE MOVE HEURISTIC (the only thing left to check in State.java)
+		//System.out.println("File state:\n" + fileState.toString());
+		//State.heu = Heuristic.DoubleMoveHeuristic;
+		//System.out.println("Cost = " + fileState.cost());
 
 
 
-		
+
 
 		// Call EightPuzzle.solve8puzzle() to solve the puzzle.
-		//EightPuzzle.solve8Puzzle(fileState);
-
-
-
-
-
-
-
-
-		System.out.println("Code complete");
+		//System.out.println(EightPuzzle.solve8Puzzle(fileState));
 	}
 }

@@ -22,7 +22,7 @@ public class EightPuzzle {
 	 */
 	public static String solve8Puzzle(State s0) {
 		// TODO
-		String solutionString = "";
+		String programString = "";
 		
 		/* 
 		1) If there exists no solution, return a message that starts with "No solution exists for the following initial 
@@ -30,7 +30,7 @@ public class EightPuzzle {
 		   Section 6 in the project description for an example. 
 		*/
 		if(!s0.solvable()) {
-			solutionString = "No solution exists for the following initial state:\n\n" + s0.toString();
+			programString = "No solution exists for the following initial state:\n\n" + s0.toString();
 		}
 
 		/* 
@@ -49,9 +49,15 @@ public class EightPuzzle {
 			3) Combine the three solution strings into one that would print out in the output format specified in Section 6 
 			   of the project description.
 			*/
+			for(int i = 0; i < 3; i++) {
+				programString += moves[i];
+				if(i < 2) {
+					programString += "\n\n";
+				}
+			}
 		}
 
-		return solutionString;
+		return programString;
 	}
 	
 	/**

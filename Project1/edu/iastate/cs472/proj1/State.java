@@ -4,15 +4,6 @@ import java.io.FileNotFoundException;
 import java.io.File;
 import java.util.Scanner;
 
-
-
-
-import java.lang.Cloneable;
-
-
-
-
-
 /**
  * @author Aren Ashlock
  */
@@ -59,18 +50,32 @@ public class State implements Cloneable, Comparable<State> {
 	 * @throws IllegalArgumentException		if board is not a 3X3 array or its nine entries are not respectively the digits 0, 1, ..., 8.
 	 */
     public State(int[][] board) throws IllegalArgumentException {
-    	// TODO
+        // Construct the board
+        this.board = new int[3][3];
+
+        // Array for checking duplicate values
+        int[] duplicateCheck = {0, 0, 0, 0, 0, 0, 0, 0, 0};
+
         if(board.length != 3 || board[0].length != 3) {
             throw new IllegalArgumentException("Dimensions are incorrect, it should be a 3X3 array");
         }
         else {
             for(int i = 0; i < 3; i++) {
                 for(int j = 0; j < 3; j++) {
-                    if(board[i][j] < 0 || board[i][j] > 8) {
+                    int boardValue = board[i][j];
+
+                    // Value isn't within bounds
+                    if(boardValue < 0 || boardValue > 8) {
                         throw new IllegalArgumentException("Array contains an element not within 0,...,8");
                     }
+                    // Value already exists in the board configuration
+                    else if(duplicateCheck[boardValue] == 1) {
+                        throw new IllegalArgumentException("Duplicate numbers found");
+                    }
+                    // Allowed value for board spot
                     else {
-                        this.board[i][j] = board[i][j];
+                        this.board[i][j] = boardValue;
+                        duplicateCheck[boardValue]++;
                     }
                 }
             }
@@ -104,11 +109,16 @@ public class State implements Cloneable, Comparable<State> {
             File inputFile = new File(inputFileName);
             Scanner fileScanner = new Scanner(inputFile);
 
-            // Construct the array
+            // Construct the board
             board = new int[3][3];
 
+            // Array for checking duplicate values
+            int[] duplicateCheck = {0, 0, 0, 0, 0, 0, 0, 0, 0};
+
             // Iterate through the board (checking that the dimensions and values are correct)
-            for(int i = 0; fileScanner.hasNextLine(); i++) {
+            int i;
+            for(i = 0; fileScanner.hasNextLine(); i++) {
+                // Still in for loop means >= 3 rows, which is not allowed
                 if(i == 3) {
                     throw new IllegalArgumentException("Dimensions are incorrect, it should be a 3X3 array");
                 }
@@ -116,27 +126,49 @@ public class State implements Cloneable, Comparable<State> {
                     String fileLine = fileScanner.nextLine();
                     Scanner lineScanner = new Scanner(fileLine);
 
-                    for(int j = 0; lineScanner.hasNextInt(); j++) {
+                    int j;
+                    for(j = 0; lineScanner.hasNextInt(); j++) {
+                        // Still in for loop means >= 3 columns, which is not allowed
                         if(j == 3) {
                             throw new IllegalArgumentException("Dimensions are incorrect, it should be a 3X3 array");
                         }
                         else {
                             int boardValue = lineScanner.nextInt();
 
+                            // Value isn't within bounds
                             if(boardValue < 0 || boardValue > 8) {
                                 throw new IllegalArgumentException("Array contains an element not within 0,...,8");
                             }
+                            // Value already exists in the board configuration
+                            else if(duplicateCheck[boardValue] == 1) {
+                                throw new IllegalArgumentException("Duplicate numbers found");
+                            }
+                            // Allowed value for board spot
                             else {
                                 board[i][j] = boardValue;
+                                duplicateCheck[boardValue]++;
                             }
                         }
+                    }
+                    // Less than 3 columns
+                    if(j < 3) {
+                        throw new IllegalArgumentException("Dimensions are incorrect, it should be a 3X3 array");
                     }
 
                     lineScanner.close();
                 }
             }
+            // Less than 3 rows
+            if(i < 3) {
+                throw new IllegalArgumentException("Dimensions are incorrect, it should be a 3X3 array");
+            }
 
-            // TODO - ensure no duplicate values are found!
+            previous = null;
+            next = null;
+            predecessor = null;
+
+            move = null;
+            numMoves = 0;
 
             fileScanner.close();
         } catch (FileNotFoundException e) {
@@ -165,9 +197,115 @@ public class State implements Cloneable, Comparable<State> {
      *                                  if DBL_UP when the empty square is not in the top row, or 
      *                                  if DBL_DOWN when the empty square is not in the bottom row. 
      */                                  
-    public State successorState(Move m) throws IllegalArgumentException {
-    	// TODO 
-    	return null; 
+    public State successorState(Move m) throws IllegalArgumentException, CloneNotSupportedException {
+        // Clone the state
+        State sucState = (State) this.clone();
+
+        // Find the 0's position to check if a move is legal and to perform it (if it is legal)
+        int zeroPosition = this.findZero();
+        int zeroRow = zeroPosition / 3;
+        int zeroCol = zeroPosition % 3;
+
+        // Check the move and perform it (if it is legal)
+        if(m == Move.LEFT) {
+            if(zeroCol == 2) {
+                throw new IllegalArgumentException("Cannot perform LEFT move (0 is in the right column)");
+            }
+            else {
+                int swap = sucState.board[zeroRow][zeroCol + 1];
+                sucState.board[zeroRow][zeroCol + 1] = 0;
+                sucState.board[zeroRow][zeroCol] = swap;
+            }
+        }
+        else if(m == Move.RIGHT) {
+            if(zeroCol == 0) {
+                throw new IllegalArgumentException("Cannot perform RIGHT move (0 is in the left column)");
+            }
+            else {
+                int swap = sucState.board[zeroRow][zeroCol - 1];
+                sucState.board[zeroRow][zeroCol - 1] = 0;
+                sucState.board[zeroRow][zeroCol] = swap;
+            }
+        }
+        else if(m == Move.UP) {
+            if(zeroRow == 2) {
+                throw new IllegalArgumentException("Cannot perform UP move (0 is in the bottom row)");
+            }
+            else {
+                int swap = sucState.board[zeroRow + 1][zeroCol];
+                sucState.board[zeroRow + 1][zeroCol] = 0;
+                sucState.board[zeroRow][zeroCol] = swap;
+            }
+        }
+        else if(m == Move.DOWN) {
+            if(zeroRow == 0) {
+                throw new IllegalArgumentException("Cannot perform DOWN move (0 is in the top row)");
+            }
+            else {
+                int swap = sucState.board[zeroRow - 1][zeroCol];
+                sucState.board[zeroRow - 1][zeroCol] = 0;
+                sucState.board[zeroRow][zeroCol] = swap;
+            }
+        }
+        else if(m == Move.DBL_LEFT) {
+            if(zeroCol != 0) {
+                throw new IllegalArgumentException("Cannot perform DBL_LEFT move (0 is not in the left column)");
+            }
+            else {
+                int firstSwap = sucState.board[zeroRow][zeroCol + 1];
+                int secondSwap = sucState.board[zeroRow][zeroCol + 2];
+                sucState.board[zeroRow][zeroCol + 2] = 0;
+                sucState.board[zeroRow][zeroCol + 1] = secondSwap;
+                sucState.board[zeroRow][zeroCol] = firstSwap;
+            }
+        }
+        else if(m == Move.DBL_RIGHT) {
+            if(zeroCol != 2) {
+                throw new IllegalArgumentException("Cannot perform DBL_RIGHT move (0 is not in the right column)");
+            }
+            else {
+                int firstSwap = sucState.board[zeroRow][zeroCol - 1];
+                int secondSwap = sucState.board[zeroRow][zeroCol - 2];
+                sucState.board[zeroRow][zeroCol - 2] = 0;
+                sucState.board[zeroRow][zeroCol - 1] = secondSwap;
+                sucState.board[zeroRow][zeroCol] = firstSwap;
+            }
+        }
+        else if(m == Move.DBL_UP) {
+            if(zeroRow != 0) {
+                throw new IllegalArgumentException("Cannot perform DBL_UP move (0 is not in the top row)");
+            }
+            else {
+                int firstSwap = sucState.board[zeroRow + 1][zeroCol];
+                int secondSwap = sucState.board[zeroRow + 2][zeroCol];
+                sucState.board[zeroRow + 2][zeroCol] = 0;
+                sucState.board[zeroRow + 1][zeroCol] = secondSwap;
+                sucState.board[zeroRow][zeroCol] = firstSwap;
+            }
+        }
+        else {
+            if(zeroRow != 2) {
+                throw new IllegalArgumentException("Cannot perform DBL_DOWN move (0 is not in the bottom row)");
+            }
+            else {
+                int firstSwap = sucState.board[zeroRow - 1][zeroCol];
+                int secondSwap = sucState.board[zeroRow - 2][zeroCol];
+                sucState.board[zeroRow - 2][zeroCol] = 0;
+                sucState.board[zeroRow - 1][zeroCol] = secondSwap;
+                sucState.board[zeroRow][zeroCol] = firstSwap;
+            }
+        }
+
+        // Update the successor variables
+        sucState.predecessor = this;
+        sucState.move = m;
+        sucState.numMoves = numMoves + 1;
+
+        // Update the predecessor variables
+        next = null;
+        previous = null;
+
+    	return sucState; 
     }
     
         
@@ -179,7 +317,7 @@ public class State implements Cloneable, Comparable<State> {
      */
     public boolean solvable() {
         // Flatten the matrix to make inversion counting easier
-        int[] solvableArray = flattenMatrix(board);
+        int[] solvableArray = this.flattenBoard();
 
         // In the goal state, there are 7 inversions
 		int goalInversions = 7;
@@ -290,6 +428,12 @@ public class State implements Cloneable, Comparable<State> {
             }
         }
 
+        // MIGHT NEED TO SET HEURISTIC VALUES TO -1 (idk if they will be updated or not)
+        clonedState.numMismatchedTiles = -1;
+	    clonedState.ManhattanDistance = -1;
+	    clonedState.numSingleDoubleMoves = -1;
+        // -----------------------------------------------------------------------------
+
         clonedState.previous = null;
         clonedState.next = null;
         clonedState.predecessor = null;
@@ -304,7 +448,17 @@ public class State implements Cloneable, Comparable<State> {
     @Override 
     public boolean equals(Object o) {
     	// TODO 
-    	return false; 
+        State otherState = (State) o;
+
+        for(int i = 0; i < 3; i++) {
+            for(int j = 0; j < 3; j++) {
+                if(board[i][j] != otherState.board[i][j]) {
+                    return false;
+                }
+            }
+        }
+
+    	return true; 
     }
         
     
@@ -320,8 +474,22 @@ public class State implements Cloneable, Comparable<State> {
      * @throws IllegalArgumentException if heuristic is none of TileMismatch, MahattanDist, DoubleMoveHeuristic. 
      */
     public int cost() throws IllegalArgumentException {
-    	// TODO 
-    	return 0; 
+    	int estimatedCost = numMoves;
+
+        if(heu == Heuristic.TileMismatch) {
+            estimatedCost += computeNumMismatchedTiles();
+        }
+        else if(heu == Heuristic.ManhattanDist) {
+            estimatedCost += computeManhattanDistance();
+        }
+        else if(heu == Heuristic.DoubleMoveHeuristic) {
+            estimatedCost += computeNumSingleDoubleMoves();
+        }
+        else {
+            throw new IllegalArgumentException("Heuristic not defined, cannot calculate the cost");
+        }
+        
+    	return estimatedCost; 
     }
 
     
@@ -336,8 +504,18 @@ public class State implements Cloneable, Comparable<State> {
      */
     @Override
     public int compareTo(State s) {
-    	// TODO 
-    	return 0; 
+        int c1 = this.cost();
+        int c2 = s.cost();
+
+        if(c1 < c2) {
+            return -1;
+        }
+        else if(c1 == c2) {
+            return 0;
+        }
+        else {
+            return 1;
+        }
     }
     
 
@@ -347,8 +525,22 @@ public class State implements Cloneable, Comparable<State> {
      * @return the number of mismatched tiles between this state and the goal state. 
      */
 	private int computeNumMismatchedTiles() {
-		// TODO 
-		return 0; 
+        if(numMismatchedTiles < 0) {
+            // COMPUTE
+            int[] goalArray = {1, 2, 3, 8, 0, 4, 7, 6, 5};
+            int[] flatBoard = this.flattenBoard();
+            int mismatched = 0;
+
+            for(int i = 0; i < 9; i++) {
+                if((flatBoard[i] != 0) && (flatBoard[i] != goalArray[i])) {
+                    mismatched++;
+                }
+            }
+
+            numMismatchedTiles = mismatched;
+        }
+
+		return numMismatchedTiles; 
 	}
 
 	
@@ -358,8 +550,39 @@ public class State implements Cloneable, Comparable<State> {
 	 * @return the Manhattan distance between this state and the goal state. 
 	 */
 	private int computeManhattanDistance() {
-		// TODO 
-		return 0; 
+        if(ManhattanDistance < 0) {
+            // The positions each tile should be in (in an array) : 0->4, 1->0, 2->1, ..., 8->3
+            int[] goalSpots = {4, 0, 1, 2, 5, 8, 7, 6, 3};
+            int[] flatBoard = this.flattenBoard();
+            int manhattan = 0;
+
+            for(int i = 0; i < 9; i++) {
+                int currVal = flatBoard[i];
+                if(currVal != 0) {
+                    int currRow = i / 3;
+                    int currCol = i % 3;
+
+                    int goalPosition = goalSpots[currVal];
+                    int goalRow = goalPosition / 3;
+                    int goalCol = goalPosition % 3;
+
+                    int colsOff = currCol - goalCol;
+                    if(colsOff < 0) {
+                        colsOff *= -1;
+                    }
+                    int rowsOff = currRow - goalRow;
+                    if(rowsOff < 0) {
+                        rowsOff *= -1;
+                    }
+
+                    manhattan += (colsOff + rowsOff);
+                }
+            }
+
+            ManhattanDistance = manhattan;
+        }
+
+		return ManhattanDistance; 
 	}
 	
 	
@@ -371,11 +594,15 @@ public class State implements Cloneable, Comparable<State> {
 	 */
 	private int computeNumSingleDoubleMoves() {
 		// TODO 
-		return 0; 
+        if(numSingleDoubleMoves < 0) {
+            // COMPUTE
+        }
+
+		return numSingleDoubleMoves; 
 	}
 
     /**
-     * Helper function added to flatten a board from a matrix to an array. Meant to make it easier to determine lexicographical order.
+     * Helper function added to flatten a board from a matrix to an array. Meant to make it easier to determine lexicographical order and solvability.
      */
     public int[] flattenBoard() {
         int[] matrixToArray = new int[9];
@@ -392,19 +619,18 @@ public class State implements Cloneable, Comparable<State> {
     }
 
     /**
-     * Helper function added to flatten a matrix. Meant to make it easier for solvability.
+     * Helper function for the successorState() method. Finds where the 0 (empty square) is so I can check for illegal moves and to conduct a move.
      */
-    public int[] flattenMatrix(int[][] matrix) {
-        int[] matrixToArray = new int[9];
-        int idx = 0;
+    public int findZero() {
+        int[] boardArray = this.flattenBoard();
+        int i;
 
-        for(int i = 0; i < 3; i++) {
-			for(int j = 0; j < 3; j++) {
-				matrixToArray[idx] = matrix[i][j];
-				idx++;
-			}
-		}
+        for(i = 0; i < 9; i++) {
+            if(boardArray[i] == 0) {
+                break;
+            }
+        }
 
-        return matrixToArray;
+        return i;
     }
 }
