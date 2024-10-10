@@ -19,7 +19,6 @@ public class OrderedStateList {
 	 */
 	private State head;           // dummy node as the head of the sorted linked list 
 	private int size = 0;
-	  
 	private boolean isOPEN;       // true if this OrderedStateList object is the list OPEN and false if the list CLOSED.
 
 	/**
@@ -55,10 +54,10 @@ public class OrderedStateList {
 	 */
 	public void addState(State s) {
 		State currState = head.next;
-
+		
 		// As long as the current state s is being compared to is not the head, it may be inserted somewhere internally in the list
 		while(!currState.equals(head)) {
-			if(compareStates(currState, s) <= 0) {
+			if(compareStates(s, currState) <= 0) {
 				// Add in the new state
 				s.previous = currState.previous;
 				s.next = currState;
@@ -78,12 +77,12 @@ public class OrderedStateList {
 		// Reached the head node again, so t does not exist -> add to the end of the list
 		if(currState.equals(head)) {
 			// Add in the new state
-			s.previous = currState.previous;
-			s.next = currState;
+			s.previous = head.previous;
+			s.next = head;
 
 			// Update the previous and next state pointers
 			s.previous.next = s;
-			currState.previous = s;
+			head.previous = s;
 		}
 
 		// Increase the size of the list

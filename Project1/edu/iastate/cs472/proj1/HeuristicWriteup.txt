@@ -1,0 +1,8 @@
+The heuristic I am using for when single and double moves are allowed is just the Manhattan Distance / 2.
+Given the new problem formulation, we can still relax the same restrictions we did with the Manhattan distance.
+However, now there is the potential for double moves.
+In an optimal solution, every move is a double move.
+Therefore, if every move is a double move, it can be no less than the Manhattan Distance / 2.
+Which, we know that the Manhattan Distance is admissible for the problem that contains only single moves.
+So, this heuristic is admissible because no matter what, it will never overestimate the number of moves to the goal state.
+Even if the optimal solution ends up being all double moves, the Manhattan Distance / 2 will correctly predict the number of moves needed (or less).

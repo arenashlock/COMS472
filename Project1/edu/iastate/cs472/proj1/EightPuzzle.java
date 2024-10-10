@@ -21,7 +21,6 @@ public class EightPuzzle {
 	 * @return a string specified in the javadoc below
 	 */
 	public static String solve8Puzzle(State s0) {
-		// TODO
 		String programString = "";
 		
 		/* 
@@ -51,9 +50,6 @@ public class EightPuzzle {
 			*/
 			for(int i = 0; i < 3; i++) {
 				programString += moves[i];
-				if(i < 2) {
-					programString += "\n\n";
-				}
 			}
 		}
 
@@ -71,16 +67,105 @@ public class EightPuzzle {
 	 * @return    solution string 
 	 */
 	public static String AStar(State s0, Heuristic h) {
-		// TODO 
+		State s = s0;
 		
 		// Initialize the two lists used by the algorithm. 
 		OrderedStateList OPEN = new OrderedStateList(h, true); 
 		OrderedStateList CLOSE = new OrderedStateList(h, false);		
 		
-		// Implement the algorithm described in Section 3 to solve the puzzle. 
-		// Once a goal state s is reached, call solutionPath(s) and return the solution string. 
+		// Implement the algorithm described in Section 3 to solve the puzzle.
+		OPEN.addState(s);
+
+		//for(int a = 0; a < 2; a++) {
+		while(OPEN.size() != 0) {
+			s = OPEN.remove();
+			CLOSE.addState(s);
+
+			if(s.isGoalState()) {
+				break;
+			}
+
+			else {
+				int totalPossibleMoves;
+
+				if(State.heu == Heuristic.DoubleMoveHeuristic) {
+					totalPossibleMoves = 8;
+				}
+				else {
+					totalPossibleMoves = 4;
+				}
+
+				for(int i = 0; i < totalPossibleMoves; i++) {
+					try {
+						State sucState = s.successorState(Move.values()[i]);
+
+						if(s.predecessor != null) {
+							if(!sucState.equals(s.predecessor)) {
+								int newCost = sucState.cost();
+								State foundState;
+
+								if(OPEN.findState(sucState) != null) {
+									// TODO
+									foundState = OPEN.findState(sucState);
+									int oldCost = foundState.cost();
+
+									if(newCost < oldCost) {
+										foundState.predecessor = s;
+									}
+								}
+								else if(CLOSE.findState(sucState) != null) {
+									// TODO
+									foundState = CLOSE.findState(sucState);
+									int oldCost = foundState.cost();
+
+									if(newCost < oldCost) {
+										OPEN.addState(foundState);
+										foundState.predecessor = s;
+									}
+								}
+								else {
+									OPEN.addState(sucState);
+								}
+							}
+						}
+						else {
+							int newCost = sucState.cost();
+							State foundState;
+
+							if(OPEN.findState(sucState) != null) {
+								// TODO
+								foundState = OPEN.findState(sucState);
+								int oldCost = foundState.cost();
+
+								if(newCost < oldCost) {
+									foundState.predecessor = s;
+								}
+							}
+							else if(CLOSE.findState(sucState) != null) {
+								// TODO
+								foundState = CLOSE.findState(sucState);
+								int oldCost = foundState.cost();
+
+								if(newCost < oldCost) {
+									OPEN.addState(foundState);
+									foundState.predecessor = s;
+								}
+							}
+							else {
+								OPEN.addState(sucState);
+							}
+						}
+					} catch (IllegalArgumentException | CloneNotSupportedException e) {
+						// Do nothing since it is not a valid move
+					}
+				}
+			}
+		}
+
+		// Once a goal state s is reached, call solutionPath(s) and return the solution string.
+		String solutionPathString = solutionPath(s);
 			
-		return null;				
+		return solutionPathString;		
 	}	
 	
 	/**
@@ -97,8 +182,29 @@ public class EightPuzzle {
 	 * @return
 	 */
 	private static String solutionPath(State goal) {
-		// TODO 
+		String solution = "\n";
+		State s = goal;
+
+		// Initial board will have a null predecessor, so just check for that
+		while(s.predecessor != null) {
+			solution = s.move + "\n\n" + s.toString() + "\n\n" + solution;
+			s = s.predecessor;
+		}
+
+		// Add the initial board to the solution string
+		solution = s.toString() + "\n\n" + solution;
+
+		// Add the header detailing numMoves and heuristic (depends on the current heuristic)
+		if(State.heu == Heuristic.TileMismatch) {
+			solution = goal.numMoves + " moves in total (heuristic: number of mismatched tiles)" + "\n\n" + solution;
+		}
+		else if(State.heu == Heuristic.ManhattanDist) {
+			solution = goal.numMoves + " moves in total (heuristic: the Manhattan distance)" + "\n\n" + solution;
+		}
+		else {
+			solution = goal.numMoves + " moves in total (heuristic: double moves allowed)" + "\n\n" + solution;
+		}
 		
-		return null; 
+		return solution; 
 	}
 }

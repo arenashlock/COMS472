@@ -296,14 +296,11 @@ public class State implements Cloneable, Comparable<State> {
             }
         }
 
-        // Update the successor variables
         sucState.predecessor = this;
         sucState.move = m;
+        sucState.next = null;
+        sucState.previous = null;
         sucState.numMoves = numMoves + 1;
-
-        // Update the predecessor variables
-        next = null;
-        previous = null;
 
     	return sucState; 
     }
@@ -428,11 +425,10 @@ public class State implements Cloneable, Comparable<State> {
             }
         }
 
-        // MIGHT NEED TO SET HEURISTIC VALUES TO -1 (idk if they will be updated or not)
+        // Set to -1 so they can be calculated again
         clonedState.numMismatchedTiles = -1;
 	    clonedState.ManhattanDistance = -1;
 	    clonedState.numSingleDoubleMoves = -1;
-        // -----------------------------------------------------------------------------
 
         clonedState.previous = null;
         clonedState.next = null;
@@ -593,11 +589,10 @@ public class State implements Cloneable, Comparable<State> {
 	 *         single or double, which will take this state to the goal state.
 	 */
 	private int computeNumSingleDoubleMoves() {
-		// TODO 
         if(numSingleDoubleMoves < 0) {
             // COMPUTE
             // TEMPORARY: my logic is in an optimal situation, every move is a double move, so utilizing manhattan and dividing by 2 is admissible
-            numSingleDoubleMoves = this.computeManhattanDistance() / 2;
+            numSingleDoubleMoves = (this.computeManhattanDistance() / 2);
         }
 
 		return numSingleDoubleMoves; 

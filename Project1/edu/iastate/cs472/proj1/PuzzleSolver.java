@@ -28,32 +28,8 @@ public class PuzzleSolver {
 	public static void main(String[] args) throws FileNotFoundException, IllegalArgumentException {	
 		// Read an initial board configuration from a file.
 		State fileState = new State(args[0]);
-			
-
-
-
-		// JUST FOR TESTING THE DOUBLE MOVE HEURISTIC (the only thing left to check in State.java)
-		System.out.println("File state:\n" + fileState.toString());
-		State.heu = Heuristic.DoubleMoveHeuristic;
-		System.out.println("Cost = " + fileState.cost());
-
-
-
-
-
-		OrderedStateList test = new OrderedStateList(Heuristic.TileMismatch, false);
-		test.addState(fileState);
-		System.out.println(test.size());
-		System.out.println(test.findState(fileState));
-		test.remove();
-		System.out.println(test.size());
-		System.out.println(test.findState(fileState));
-
-
-
-
 
 		// Call EightPuzzle.solve8puzzle() to solve the puzzle.
-		//System.out.println(EightPuzzle.solve8Puzzle(fileState));
+		System.out.print(EightPuzzle.solve8Puzzle(fileState));
 	}
 }
