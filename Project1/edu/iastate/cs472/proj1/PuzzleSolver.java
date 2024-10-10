@@ -33,9 +33,21 @@ public class PuzzleSolver {
 
 
 		// JUST FOR TESTING THE DOUBLE MOVE HEURISTIC (the only thing left to check in State.java)
-		//System.out.println("File state:\n" + fileState.toString());
-		//State.heu = Heuristic.DoubleMoveHeuristic;
-		//System.out.println("Cost = " + fileState.cost());
+		System.out.println("File state:\n" + fileState.toString());
+		State.heu = Heuristic.DoubleMoveHeuristic;
+		System.out.println("Cost = " + fileState.cost());
+
+
+
+
+
+		OrderedStateList test = new OrderedStateList(Heuristic.TileMismatch, false);
+		test.addState(fileState);
+		System.out.println(test.size());
+		System.out.println(test.findState(fileState));
+		test.remove();
+		System.out.println(test.size());
+		System.out.println(test.findState(fileState));
 
 
 

@@ -596,6 +596,8 @@ public class State implements Cloneable, Comparable<State> {
 		// TODO 
         if(numSingleDoubleMoves < 0) {
             // COMPUTE
+            // TEMPORARY: my logic is in an optimal situation, every move is a double move, so utilizing manhattan and dividing by 2 is admissible
+            numSingleDoubleMoves = this.computeManhattanDistance() / 2;
         }
 
 		return numSingleDoubleMoves; 
@@ -632,5 +634,21 @@ public class State implements Cloneable, Comparable<State> {
         }
 
         return i;
+    }
+
+    /**
+     * Constructor for the dummy node
+     */
+    public State() {
+        // Construct the board
+        board = new int[3][3];
+        for(int i = 0; i < 3; i++) {
+            for(int j = 0; j < 3; j++) {
+                board[i][j] = 0;
+            }
+        }
+
+        previous = null;
+        next = null;
     }
 }
