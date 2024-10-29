@@ -1,0 +1,368 @@
+\documentclass{article}
+\usepackage{graphicx} % Required for inserting images
+\usepackage{enumitem}
+\usepackage{xcolor}
+\usepackage{listings}
+\usepackage{mathtools}
+\usepackage{amsmath}
+\newcommand{\logicarg}[2]{% \logicarg{<premise>}{<conclusion>}
+  \begin{tabular}[t]{@{}l@{}}
+    #1 \\ \hline #2
+  \end{tabular}%
+}
+
+\setlength{\oddsidemargin}{-0.25in}
+\setlength{\topmargin}{-0.5in}
+\setlength{\headheight}{0cm}
+\setlength{\headsep}{0cm}
+\setlength{\textheight}{10in}
+\setlength{\textwidth}{7in}
+\setlength{\topskip}{0cm}
+
+\begin{document}
+
+\noindent\textbf{ComS 472 - PS7 \quad Due: Nov 03, 2024 \quad Name: Aren Ashlock}
+
+\begin{enumerate}
+
+% ------------------------------------- 1 DONE -------------------------------------
+
+\item \textbf{(10 pts)} (Exercise 8.11) Consider a vocabulary with the following symbols:
+
+\begin{itemize}
+    \item $Occupation(p, o):$ Predicate. Person $p$ has occupation $o$.
+    \item $Customer(p_1, p_2):$ Predicate. Person $p_1$ is a customer of person $p_2$.
+    \item $Boss(p_1, p_2):$ Predicate. Person $p_1$ is a boss of person $p_2$.
+    \item \textit{Doctor, Surgeon, Lawyer, Actor:} Constants denoting occupations.
+    \item \textit{Emily, Joe:} Constants denoting people.
+\end{itemize}
+
+Use these symbols to write the following assertions in first-order logic:
+
+    \begin{enumerate}[label=($\alph*$)]
+
+    % ----------------------------------- 1c DONE -----------------------------------
+
+    \addtocounter{enumii}{2} \item \textbf{(2 pts)} All surgeons are doctors.
+
+    \color{blue}
+        $\forall x$ $Occupation(x, Surgeon) \Rightarrow Occupation(x, Doctor)$
+    \color{black}
+
+    % -------------------------------------------------------------------------------
+
+    % ----------------------------------- 1d DONE -----------------------------------
+
+    \item \textbf{(2 pts)} Joe does not have a lawyer (i.e., is not a customer of any lawyer).
+
+    \color{blue}
+        $\forall x$ $Occupation(x, Lawyer) \Rightarrow \neg Customer(Joe, x)$
+    \color{black}
+
+    % -------------------------------------------------------------------------------
+
+    % ----------------------------------- 1e DONE -----------------------------------
+
+    \item \textbf{(2 pts)} Emily has a boss who is a lawyer.
+
+    \color{blue}
+        $\exists x$ $Boss(x, Emily) \wedge Occupation(x, Lawyer)$
+    \color{black}
+
+    % -------------------------------------------------------------------------------
+
+    % ----------------------------------- 1f DONE -----------------------------------
+
+    \item \textbf{(2 pts)} There exists a lawyer all of whose customers are doctors.
+
+    \color{blue}
+        $\exists x$ $Occupation(x, Lawyer) \wedge \forall y$ $Customer(y, x) \Rightarrow Occupation(y, Doctor)$
+    \color{black}
+
+    % -------------------------------------------------------------------------------
+
+    % ----------------------------------- 1g DONE -----------------------------------
+
+    \item \textbf{(2 pts)} Every surgeon has a lawyer.
+
+    \color{blue}
+        $\forall x$ $Occupation(x, Surgeon) \Rightarrow (\exists y$ $Occupation(y, Lawyer) \wedge Customer(x, y))$
+    \color{black}
+
+    % -------------------------------------------------------------------------------
+    
+    \end{enumerate}
+
+% ----------------------------------------------------------------------------------
+
+% ------------------------------------- 2 DONE -------------------------------------
+
+\item \textbf{(8 pts)} (Exercise 8.12) In each of the following we give an English sentence and a number of candidate logical expressions. For each of the logical expressions, state whether it (1) correctly expresses the English sentence; (2) is syntactically invalid and therefore meaningless; or (3) is syntactically valid but does not express the meaning of the English sentence.
+
+    \begin{enumerate}[label=($\alph*$)]
+
+    % ----------------------------------- 2c DONE -----------------------------------
+
+    \addtocounter{enumii}{2} \item \textbf{(4 pts)} No dog bites a child of its owner.
+
+        \begin{enumerate}[label=$\arabic*.$]
+
+        % -------------------------------- 2c1 DONE --------------------------------
+
+        \item $\forall x \; \mbox{\it Dog}(x) \Rightarrow \neg \mbox{\it Bites}\Bigl(x, \mbox{\it Child} \left(\mbox{\it Owner}(x) \right)\Bigr)$.
+
+            \color{blue}
+                Syntactically invalid and therefore meaningless
+            \color{black}
+
+        % --------------------------------------------------------------------------
+
+        % -------------------------------- 2c2 DONE --------------------------------
+
+        \item $\neg\exists x, y \; \mbox{\it Dog}(x) \wedge \mbox{\it Child}\Bigl(y, \mbox{\it Owner}(x)\Bigr) \wedge \mbox{\it Bites}(x, y)$.
+
+            \color{blue}
+                Correctly expresses the English sentence
+            \color{black}
+
+        % --------------------------------------------------------------------------
+
+        % -------------------------------- 2c3 DONE --------------------------------
+
+        \item $\forall x \; \mbox{\it Dog} (x) \Rightarrow \Bigl(\forall y\; \mbox{\it Child} \bigl(y, \mbox{\it Owner}(x)\bigr) \Rightarrow \neg \mbox{\it Bites} (x, y) \Bigr)$.
+
+            \color{blue}
+                Correctly expresses the English sentence
+            \color{black}
+
+        % --------------------------------------------------------------------------
+
+        % -------------------------------- 2c4 DONE --------------------------------
+
+        \item $\neg \exists x\; \mbox{\it Dog}(x) \Rightarrow \Bigl(\exists y\; \mbox{\it Child}(y, \mbox{\it Owner}(x)) \wedge \mbox{\it Bites}(x, y)\Bigr)$.
+
+            \color{blue}
+                Syntactically valid but does not express the meaning of the English sentence
+            \color{black}
+
+        % --------------------------------------------------------------------------
+
+        \end{enumerate}
+
+    % -------------------------------------------------------------------------------
+
+    % ----------------------------------- 2d DONE -----------------------------------
+
+    \item \textbf{(4 pts)} Everyone’s zip code within a state has the same first digit.
+
+    \begin{enumerate}[label=$\arabic*.$]
+
+        % -------------------------------- 2d1 DONE --------------------------------
+
+        \item \begin{eqnarray*} & \hspace*{-2in} \forall x, s, z_1 \; \Bigl(\mbox{\it State}(s) \wedge \mbox{\it LivesIn}(x, s) \wedge \mbox{\it Zip}(x)=z_1 \Bigr) & \\
+        & \Rightarrow \Bigl(\forall y, z_2 \; \mbox{\it LivesIn}(y, s) \wedge \mbox{\it Zip}(y)=z_2 \Rightarrow \mbox{\it Digit}(1, z_1) = \mbox{\it Digit}(1, z_2)\Bigr). & \end{eqnarray*}
+
+            \color{blue}
+                Correctly expresses the English sentence
+            \color{black}
+
+        % --------------------------------------------------------------------------
+
+        % -------------------------------- 2d2 DONE --------------------------------
+
+        \item \begin{eqnarray*} & \hspace*{-2in} \forall x, s \; \Bigl( \mbox{\it State}(s) \wedge \mbox{\it LivesIn}(x, s) \wedge \exists z_1 \; \mbox{\it Zip}(x)=z_1\Bigr) & \\
+        & \Rightarrow \Bigl(\forall y, z_2\; \mbox{\it LivesIn}(y, s) \wedge \mbox{\it Zip}(y) = z_2 \wedge \mbox{\it Digit}(1, z_1) = \mbox{\it Digit}(1, z_2) \Bigr) & \end{eqnarray*}
+
+            \color{blue}
+                Syntactically invalid and therefore meaningless
+            \color{black}
+
+        % --------------------------------------------------------------------------
+
+        % -------------------------------- 2d3 DONE --------------------------------
+
+        \item $\forall x, y, s \;\; \mbox{\it State}(s) \wedge \mbox{\it LivesIn}(x, s) \wedge \mbox{\it LivesIn}(y, s) \Rightarrow \mbox{\it Digit}(1, \mbox{\it Zip}(x)\mbox{\it Zip}(y))$.
+
+            \color{blue}
+                Syntactically invalid and therefore meaningless
+            \color{black}
+
+        % --------------------------------------------------------------------------
+
+        % -------------------------------- 2d4 DONE --------------------------------
+
+        \item $\forall x, y, s \;\; \mbox{\it State}(s) \wedge \mbox{\it LivesIn}(x, s) \wedge \mbox{\it LivesIn}(y, s) \Rightarrow \mbox{\it Digit}(1, \mbox{\it Zip}(x)) = \mbox{\it Digit}(1, \mbox{\it Zip}(y))$.
+
+            \color{blue}
+                Correctly expresses the English sentence
+            \color{black}
+
+        % --------------------------------------------------------------------------
+
+        \end{enumerate}
+
+    % -------------------------------------------------------------------------------
+    
+    \end{enumerate}
+
+% ----------------------------------------------------------------------------------
+
+% ------------------------------------- 3 DONE -------------------------------------
+
+\item \textbf{(12 pts)} (Exercise 8.29) For each of the following sentences in English, decide if the accompanying first-order logic sentence is a good translation. If not, explain why not and correct it.
+
+    \begin{enumerate}[label=($\alph*$)]
+
+    % ----------------------------------- 3a DONE -----------------------------------
+
+    \item \textbf{(4 pts)} Any apartment in London has lower rent than some apartments in Paris.
+
+    \[\forall x \; \Bigl( \mbox{\it Apt}(x) \wedge \mbox{\it In}(x, \mbox{\it London})\Bigr)\Rightarrow \exists y\; \Bigl( (\mbox{\it Apt}(y) \wedge \mbox{\it In}(y, \mbox{\it Paris}))\Rightarrow \left(\mbox{\it Rent}(x) < \mbox{\it Rent}(y)\right)\Bigr).\]
+
+    \color{blue}
+        This is a not good translation due to the 2nd implication. This allows a situation where there could be an apartment with higher rent that isn't necessarily in Paris, and this logic sentence would be true even though we don't know for sure there is at least 1 apartment in Paris apartment $x$ has cheaper rent than.
+        \[\forall x \; \Bigl( \mbox{\it Apt}(x) \wedge \mbox{\it In}(x, \mbox{\it London})\Bigr)\Rightarrow \exists y\; \Bigl( \mbox{\it Apt}(y) \wedge \mbox{\it In}(y, \mbox{\it Paris}) \wedge \left(\mbox{\it Rent}(x) < \mbox{\it Rent}(y)\right)\Bigr).\]
+    \color{black}
+
+    % -------------------------------------------------------------------------------
+
+    % ----------------------------------- 3b DONE -----------------------------------
+
+    \item \textbf{(4 pts)} There is exactly one apartment in Paris with rent below \$1000.
+
+    \begin{eqnarray*}\exists x \; \mbox{\it Apt}(x) \wedge \mbox{\it In}(x, \mbox{\it Paris}) \wedge \forall y \;\Bigl(\mbox{\it Apt}(y) \wedge \mbox{\it In}(y, {\it Paris}) \wedge(\mbox{\it Rent}(y) < \mbox{\it Dollars}(1000))\Bigr) & & \\& \hspace*{-5in} \Rightarrow (y = x). &\end{eqnarray*}
+
+    \color{blue}
+        This is not a good translation. The first portion before the universal quantifier doesn't make $x$ have rent below \$1000, so the implication can be false since $y$ has to be below \$1000 but $x$ doesn't necessarily. Also, it's saying that $x$ can only be equal to $y$ if it matches what's in the universal quantifier. So, we want to move the implication within the universal quantifier since there may be apartments outside Paris that has rent below \$1000.
+        \begin{eqnarray*}\exists x \; \mbox{\it Apt}(x) \wedge \mbox{\it In}(x, \mbox{\it Paris}) \wedge (\mbox{\it Rent}(x) < \mbox{\it Dollars}(1000)) \wedge \forall y \;\Bigl(\mbox{\it Apt}(y) \wedge \mbox{\it In}(y, {\it Paris}) \wedge(\mbox{\it Rent}(y) < \mbox{\it Dollars}(1000)) & & \\& \hspace*{-5in} \Rightarrow (y = x)\Bigr). &\end{eqnarray*}
+    \color{black}
+
+    % -------------------------------------------------------------------------------
+
+    % ----------------------------------- 3c DONE -----------------------------------
+
+    \item \textbf{(4 pts)} If an apartment is more expensive than all apartments in London, it must be in Moscow.
+
+    \[\forall x \; \mbox{\it Apt}(x) \wedge \Bigl(\forall y\; \mbox{\it Apt}(y) \wedge \mbox{\it In}(y, \mbox{\it London}) \wedge (\mbox{\it Rent}(x) > \mbox{\it Rent}(y))\Bigr) \Rightarrow \mbox{\it In}(x, \mbox{\it Moscow}).\]
+
+    \color{blue}
+        This is not a good translation since there could be apartments not in London which the Moscow apartment could be more expensive than as well. We only care about requiring the rent of apartment $x$ be greater than all apartments in London, no restrictions on anything else.
+        \[\forall x \; \mbox{\it Apt}(x) \wedge \Bigl(\forall y\; \mbox{\it Apt}(y) \wedge \mbox{\it In}(y, \mbox{\it London}) \Rightarrow (\mbox{\it Rent}(x) > \mbox{\it Rent}(y))\Bigr) \Rightarrow \mbox{\it In}(x, \mbox{\it Moscow}).\]
+    \color{black}
+
+    % -------------------------------------------------------------------------------
+    
+    \end{enumerate}
+
+% ----------------------------------------------------------------------------------
+
+% ------------------------------------- 4 DONE -------------------------------------
+
+\item \textbf{(12 pts)} (Exercise 8.36) Consider a first-order logical knowledge base that describes worlds containing people, songs, albums (e.g., “Meet the Beatles”) and disks (i.e., particular physical instances of CDs). The vocabulary contains the following symbols:
+
+\begin{itemize}
+    \item $CopyOf(d, a):$ Predicate. Disk $d$ is a copy of album $a$.
+    \item $Owns(p, d):$ Predicate. Person $p$ owns disk $d$.
+    \item $Sings(p, s, a):$ Album $a$ includes a recording of song $s$ sung by person $p$.
+    \item $Wrote(p, s):$ Person $p$ wrote song $s$.
+    \item \textit{Lennon, McCartney, Gershwin, Joe, ADayInTheLife, Revolver}
+\end{itemize}
+
+    \begin{enumerate}[label=($\alph*$)]
+
+    % ----------------------------------- 4c DONE -----------------------------------
+
+    \addtocounter{enumii}{2} \item \textbf{(3 pts)} Either Lennon or McCartney wrote “A Day in the Life”.
+
+    \color{blue}
+        $Wrote(Lennos, ADayInTheLife) \vee Wrote(McCartney, ADayInTheLife)$
+    \color{black}
+
+    % -------------------------------------------------------------------------------
+
+    % ----------------------------------- 4f DONE -----------------------------------
+
+    \addtocounter{enumii}{2} \item \textbf{(3 pts)} Every song that McCartney sings on *Revolver* was written by McCartney.
+
+    \color{blue}
+        $\forall s$ $Sings(McCartney, s, Revolver) \Rightarrow Wrote(McCartney, s)$
+    \color{black}
+
+    % -------------------------------------------------------------------------------
+
+    % ----------------------------------- 4h DONE -----------------------------------
+
+    \addtocounter{enumii}{1} \item \textbf{(3 pts)} Every song that Gershwin wrote has been recorded on some album. (Possibly different songs are recorded on different albums.)
+
+    \color{blue}
+        $\forall s$ $Wrote(Gershwin, s) \Rightarrow \exists a, p$ $Sings(p, s, a)$
+    \color{black}
+
+    % -------------------------------------------------------------------------------
+
+    % ----------------------------------- 4i DONE -----------------------------------
+
+    \item \textbf{(3 pts)} There is a single album that contains every song that Joe has written.
+
+    \color{blue}
+        $\exists a \forall s$ $Wrote(Joe, s) \Rightarrow \exists p$ $Sings(p, s, a)$
+    \color{black}
+
+    % -------------------------------------------------------------------------------
+    
+    \end{enumerate}
+
+% ----------------------------------------------------------------------------------
+
+% ------------------------------------- 5 DONE -------------------------------------
+
+\item \textbf{(8 pts)} (Exercise 9.4) For each pair of atomic sentences, give the most general unifier if it exists:
+
+    \begin{enumerate}[label=($\alph*$)]
+
+    % ----------------------------------- 5a DONE -----------------------------------
+
+    \item \textbf{(2 pts)} $P(A, B, B),$ $P(x, y, z).$
+
+    \color{blue}
+        \{$x/A, y/B, z/B$\}
+    \color{black}
+
+    % -------------------------------------------------------------------------------
+
+    % ----------------------------------- 5b DONE -----------------------------------
+
+    \item \textbf{(2 pts)} $Q(y, G(A, B)),$ $Q(G(x, x), y).$
+
+    \color{blue}
+        No unifier exists
+    \color{black}
+
+    % -------------------------------------------------------------------------------
+
+    % ----------------------------------- 5c DONE -----------------------------------
+
+    \item \textbf{(2 pts)} $Older(Father(y), y),$ $Older(Father(x), John).$
+
+    \color{blue}
+        \{$y/John, x/John$\}
+    \color{black}
+
+    % -------------------------------------------------------------------------------
+
+    % ----------------------------------- 5d DONE -----------------------------------
+
+    \item \textbf{(2 pts)} $Knows(Father(y), y)),$ $Knows(x, x).$
+
+    \color{blue}
+        No unifier exists
+    \color{black}
+
+    % -------------------------------------------------------------------------------
+    
+    \end{enumerate}
+
+% ----------------------------------------------------------------------------------
+
+\end{enumerate}
+\end{document}
