@@ -1,0 +1,2 @@
+To compile, be in a parent folder, then type "javac -d . edu/iastate/cs472/proj2/*.java"
+To run, stay in the parent folder and type "java edu.iastate.cs472.proj2.Checkers"
