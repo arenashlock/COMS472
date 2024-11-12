@@ -7,10 +7,8 @@ package edu.iastate.cs472.proj2;
  * Methods are provided to return lists of available legal moves.
  */
 public class CheckersData {
-
     // The following constants represent the possible contents of a square on the board. 
     // The constants RED and BLACK also represent players in the game.
-
     static final int
         EMPTY = 0,
         RED = 1,
@@ -69,6 +67,21 @@ public class CheckersData {
     void setUpGame() {
         // TODO
     	// Set up the board with pieces BLACK, RED, and EMPTY
+        for(int row = 0; row < 8; row++) {
+            for(int col = 0; col < 8; col++) {
+                if(row % 2 == col % 2) {
+                    if(row < 3) {
+                        board[row][col] = BLACK;
+                    } else if(row > 4) {
+                        board[row][col] = RED;
+                    } else {
+                        board[row][col] = EMPTY;
+                    }
+                } else {
+                    board[row][col] = EMPTY;
+                }
+            }
+        }
     }
 
     /**
@@ -86,8 +99,8 @@ public class CheckersData {
      */
     void makeMove(CheckersMove move) {
         int l = move.rows.size();
-        for(int i = 0; i < l-1; i++)
-            makeMove(move.rows.get(i), move.cols.get(i), move.rows.get(i+1), move.cols.get(i+1));
+        for(int i = 0; i < l - 1; i++)
+            makeMove(move.rows.get(i), move.cols.get(i), move.rows.get(i + 1), move.cols.get(i + 1));
     }
 
     /**
@@ -107,6 +120,52 @@ public class CheckersData {
         // 1. move the piece from (fromRow,fromCol) to (toRow,toCol)
         // 2. if this move is a jump, remove the captured piece
         // 3. if the piece moves into the kings row on the opponent's side of the board, crowned it as a king
+        int movedPiece;
+        boolean isJump = false;
+
+        // Get the kind of piece
+        if(board[fromRow][fromCol] == RED) {
+            movedPiece = RED;
+        } else if(board[fromRow][fromCol] == RED_KING) {
+            movedPiece = RED_KING;
+        } else if(board[fromRow][fromCol] == BLACK) {
+            movedPiece = BLACK;
+        } else {
+            movedPiece = BLACK_KING;
+        }
+
+        // (1) Move the piece
+        board[fromRow][fromCol] = EMPTY;
+        board[toRow][toCol] = movedPiece;
+
+        // Figure out if the move is a jump
+        if(fromRow % 2 == toRow % 2) {
+            isJump = true;
+        }
+
+        // (2) Remove the piece that got captures
+        if(isJump) {
+            if((toRow - fromRow) > 0) {
+                if((toCol - fromCol) > 0) {
+                    board[toRow - 1][toCol - 1] = EMPTY;
+                } else {
+                    board[toRow - 1][toCol + 1] = EMPTY;
+                }
+            } else {
+                if((toCol - fromCol) > 0) {
+                    board[toRow + 1][toCol - 1] = EMPTY;
+                } else {
+                    board[toRow + 1][toCol + 1] = EMPTY;
+                }
+            }
+        }
+
+        // (3) Crown the piece as a king if it reached the opposite side
+        if(movedPiece == RED && toRow == 0) {
+            board[toRow][toCol] = RED_KING;
+        } else if(movedPiece == BLACK && toRow == 7) {
+            board[toRow][toCol] = BLACK_KING;
+        }
     }
 
     /**
@@ -120,6 +179,13 @@ public class CheckersData {
      */
     CheckersMove[] getLegalMoves(int player) {
         // TODO
+        // Not a valid player, return null
+        if(player != RED && player != BLACK) {
+            return null;
+        }
+
+        
+
         return null;
     }
 

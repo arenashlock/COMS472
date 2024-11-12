@@ -4,14 +4,12 @@ import java.util.ArrayList;
 
 /**
  * A CheckersMove object represents a move in the game of Checkers.
- * It holds the row and column of the piece that is to be moved
- * and the row and column of the square to which it is to be moved.
+ * It holds the row and column of the piece that is to be moved and the row and column of the square to which it is to be moved.
  * (This class makes no guarantee that the move is legal.)
  *
  * It represents an action in the game of Checkers.
  * There may be a single move or multiple jumps in an action.
- * It holds a sequence of the rows and columns of the piece
- * that is to be moved, for example:
+ * It holds a sequence of the rows and columns of the piece that is to be moved, for example:
  * a single move: (2, 0) -> (3, 1)
  * a sequnce of jumps: (2, 0) -> (4, 2) -> (6, 0)
  *
@@ -39,16 +37,14 @@ public class CheckersMove {
     }
     
     boolean isJump() {
-        // Test whether this move is a jump.  It is assumed that
-        // the move is legal.  In a jump, the piece moves two
-        // rows.  (In a regular move, it only moves one row.)
+        // Test whether this move is a jump.
+        // It is assumed that the move is legal.
+        // In a jump, the piece moves two rows. (In a regular move, it only moves one row.)
         return (rows.get(0) - rows.get(1) == 2 || rows.get(0) - rows.get(1) == -2);
     }
     
-    
     void addMove(int r, int c){
-        // add another move (continuous jump), which goes from
-        // (last ele in rows, last ele in cols) to (r, c)
+        // add another move (continuous jump), which goes from (last ele in rows, last ele in cols) to (r, c)
         rows.add(r);
         cols.add(c);
     }
@@ -62,7 +58,5 @@ public class CheckersMove {
         move.cols.addAll(this.cols);
         
         return move;
-        
     }
-    
 }  // end class CheckersMove.
