@@ -189,30 +189,53 @@ public class CheckersData {
         // Use an ArrayList since the number of legal jumps is unknown
         ArrayList<CheckersMove> legalMovesAL = new ArrayList<>();
 
+        // Keep track of whether legal moves are simply moves or if they are jumps
+        boolean movesAreJumps = false;
+
         // RED player
         if(player == RED) {
             for(int row = 0; row < 8; row++) {
                 for(int col = 0; col < 8; col++) {
                     // Will check these 2 tiles for both normal and king pieces
                     if(board[row][col] == RED) {
-                        if(col == 0) { // On the far left tile
-                            // Check if the square directly NW is empty
-                            if(board[row - 1][col + 1] == EMPTY) {
-                                legalMovesAL.add(new CheckersMove(row, col, row - 1, col + 1));
+                        // Check if there are jumps for the piece
+                        CheckersMove[] legalJumps = getLegalJumpsFrom(player, row, col);
+
+                        // If there are jumps
+                        if(legalJumps.length > 0) {
+                            // If these were the first jumps found, reset the ArrayList and update the boolean
+                            if(movesAreJumps == false) {
+                                legalMovesAL.clear();
+                                movesAreJumps = true;
                             }
-                        } else if(col == 7) { // On the far right side
-                            // Check if the square directly NE is empty
-                            if(board[row - 1][col - 1] == EMPTY) {
-                                legalMovesAL.add(new CheckersMove(row, col, row - 1, col - 1));
+                            
+                            // Add the jumps to the ArrayList
+                            for(int i = 0; i < legalJumps.length; i++) {
+                                legalMovesAL.add(legalJumps[i]);
                             }
-                        } else {
-                            // Check if the square directly NW is empty
-                            if(board[row - 1][col + 1] == EMPTY) {
-                                legalMovesAL.add(new CheckersMove(row, col, row - 1, col + 1));
-                            }
-                            // Check if the square directly NE is empty
-                            if(board[row - 1][col - 1] == EMPTY) {
-                                legalMovesAL.add(new CheckersMove(row, col, row - 1, col - 1));
+                        }
+
+                        // If there haven't been any jumps found yet, add normal moves
+                        if(movesAreJumps == false) {
+                            if(col == 0) { // On the far left tile
+                                // Check if the square directly NW is empty
+                                if(board[row - 1][col + 1] == EMPTY) {
+                                    legalMovesAL.add(new CheckersMove(row, col, row - 1, col + 1));
+                                }
+                            } else if(col == 7) { // On the far right side
+                                // Check if the square directly NE is empty
+                                if(board[row - 1][col - 1] == EMPTY) {
+                                    legalMovesAL.add(new CheckersMove(row, col, row - 1, col - 1));
+                                }
+                            } else {
+                                // Check if the square directly NW is empty
+                                if(board[row - 1][col + 1] == EMPTY) {
+                                    legalMovesAL.add(new CheckersMove(row, col, row - 1, col + 1));
+                                }
+                                // Check if the square directly NE is empty
+                                if(board[row - 1][col - 1] == EMPTY) {
+                                    legalMovesAL.add(new CheckersMove(row, col, row - 1, col - 1));
+                                }
                             }
                         }
                     }
@@ -226,24 +249,44 @@ public class CheckersData {
                 for(int col = 0; col < 8; col++) {
                     // Will check these 2 tiles for both normal and king pieces
                     if(board[row][col] == BLACK) {
-                        if(col == 0) { // On the far left tile
-                            // Check if the square directly SW is empty
-                            if(board[row + 1][col + 1] == EMPTY) {
-                                legalMovesAL.add(new CheckersMove(row, col, row + 1, col + 1));
+                        // Check if there are jumps for the piece
+                        CheckersMove[] legalJumps = getLegalJumpsFrom(player, row, col);
+
+                        // If there are jumps
+                        if(legalJumps.length > 0) {
+                            // If these were the first jumps found, reset the ArrayList and update the boolean
+                            if(movesAreJumps == false) {
+                                legalMovesAL.clear();
+                                movesAreJumps = true;
                             }
-                        } else if(col == 7) { // On the far right side
-                            // Check if the square directly SE is empty
-                            if(board[row + 1][col - 1] == EMPTY) {
-                                legalMovesAL.add(new CheckersMove(row, col, row + 1, col - 1));
+                            
+                            // Add the jumps to the ArrayList
+                            for(int i = 0; i < legalJumps.length; i++) {
+                                legalMovesAL.add(legalJumps[i]);
                             }
-                        } else {
-                            // Check if the square directly SW is empty
-                            if(board[row + 1][col + 1] == EMPTY) {
-                                legalMovesAL.add(new CheckersMove(row, col, row + 1, col + 1));
-                            }
-                            // Check if the square directly SE is empty
-                            if(board[row + 1][col - 1] == EMPTY) {
-                                legalMovesAL.add(new CheckersMove(row, col, row + 1, col - 1));
+                        }
+
+                        // If there haven't been any jumps found yet, add normal moves
+                        if(movesAreJumps == false) {
+                            if(col == 0) { // On the far left tile
+                                // Check if the square directly SW is empty
+                                if(board[row + 1][col + 1] == EMPTY) {
+                                    legalMovesAL.add(new CheckersMove(row, col, row + 1, col + 1));
+                                }
+                            } else if(col == 7) { // On the far right side
+                                // Check if the square directly SE is empty
+                                if(board[row + 1][col - 1] == EMPTY) {
+                                    legalMovesAL.add(new CheckersMove(row, col, row + 1, col - 1));
+                                }
+                            } else {
+                                // Check if the square directly SW is empty
+                                if(board[row + 1][col + 1] == EMPTY) {
+                                    legalMovesAL.add(new CheckersMove(row, col, row + 1, col + 1));
+                                }
+                                // Check if the square directly SE is empty
+                                if(board[row + 1][col - 1] == EMPTY) {
+                                    legalMovesAL.add(new CheckersMove(row, col, row + 1, col - 1));
+                                }
                             }
                         }
                     }
@@ -280,20 +323,50 @@ public class CheckersData {
 
         // RED player
         if(player == RED) {
-            if(board[row][col] == RED_KING) {
-                isKing = true;
+            if(col == 0 || col == 1) { // In the 2 left columns
+                // Check if the tile can jump NW (over normal or king piece)
+                if(board[row - 2][col + 2] == EMPTY && (board[row - 1][col + 1] == BLACK || board[row - 1][col + 1] == BLACK_KING)) {
+                    legalJumpsAL.add(new CheckersMove(row, col, row - 2, col + 2));
+                }
+            } else if(col == 6 || col == 7) { // In the 2 right columns
+                // Check if the tile can jump NE (over normal or king piece)
+                if(board[row - 2][col - 2] == EMPTY && (board[row - 1][col - 1] == BLACK || board[row - 1][col - 1] == BLACK_KING)) {
+                    legalJumpsAL.add(new CheckersMove(row, col, row - 2, col - 2));
+                }
+            } else {
+                // Check if the tile can jump NW (over normal or king piece)
+                if(board[row - 2][col + 2] == EMPTY && (board[row - 1][col + 1] == BLACK || board[row - 1][col + 1] == BLACK_KING)) {
+                    legalJumpsAL.add(new CheckersMove(row, col, row - 2, col + 2));
+                }
+                // Check if the tile can jump NE (over normal or king piece)
+                if(board[row - 2][col - 2] == EMPTY && (board[row - 1][col - 1] == BLACK || board[row - 1][col - 1] == BLACK_KING)) {
+                    legalJumpsAL.add(new CheckersMove(row, col, row - 2, col - 2));
+                }
             }
-
-            // CHECK...
         }
 
         // BLACK player
         if(player == BLACK) {
-            if(board[row][col] == BLACK_KING) {
-                isKing = true;
+            if(col == 0 || col == 1) { // In the 2 left columns
+                // Check if the tile can jump NW (over normal or king piece)
+                if(board[row + 2][col + 2] == EMPTY && (board[row + 1][col + 1] == RED || board[row + 1][col + 1] == RED_KING)) {
+                    legalJumpsAL.add(new CheckersMove(row, col, row + 2, col + 2));
+                }
+            } else if(col == 6 || col == 7) { // In the 2 right columns
+                // Check if the tile can jump NE (over normal or king piece)
+                if(board[row + 2][col - 2] == EMPTY && (board[row + 1][col - 1] == RED || board[row + 1][col - 1] == RED_KING)) {
+                    legalJumpsAL.add(new CheckersMove(row, col, row + 2, col - 2));
+                }
+            } else {
+                // Check if the tile can jump NW (over normal or king piece)
+                if(board[row + 2][col + 2] == EMPTY && (board[row + 1][col + 1] == RED || board[row + 1][col + 1] == RED_KING)) {
+                    legalJumpsAL.add(new CheckersMove(row, col, row + 2, col + 2));
+                }
+                // Check if the tile can jump NE (over normal or king piece)
+                if(board[row + 2][col - 2] == EMPTY && (board[row + 1][col - 1] == RED || board[row + 1][col - 1] == RED_KING)) {
+                    legalJumpsAL.add(new CheckersMove(row, col, row + 2, col - 2));
+                }
             }
-
-            // CHECK...
         }
 
         // Convert ArrayList to an array (for the return type)
