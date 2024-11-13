@@ -9,22 +9,27 @@ import javax.swing.*;
 
 /**
  * This panel lets two users play checkers against each other.
- * Red always starts the game.  If a player can jump an opponent's piece, then the player must jump.
- * When a player can make no more moves, the game ends.
+ * Red always starts the game.  If a player can jump an opponent's
+ * piece, then the player must jump.  When a player can make no more
+ * moves, the game ends.
  *
- * The class has a main() routine that lets it be run as a stand-alone application.
- * The application just opens a window that uses an object of type Checkers as its content pane.
+ * The class has a main() routine that lets it be run as a stand-alone
+ * application.  The application just opens a window that uses an object
+ * of type Checkers as its content pane.
  * 
  * Adapt to the changes in CheckersMove.
+ * 
  */
 public class Checkers extends JPanel {
+
     /**
-     * Main routine makes it possible to run Checkers as a stand-alone application.
-     * Opens a window showing a Checkers panel; the program ends when the user closes the window.
+     * Main routine makes it possible to run Checkers as a stand-alone
+     * application.  Opens a window showing a Checkers panel; the program
+     * ends when the user closes the window.
      */
-	// AIKEY
+	//AIKEY
 	static int aiKey = 0;
-	// To demonstrate previous board
+	//To demonstrate previous board
     static boolean chengeValue = false;
     
 	public static void main(String[] args) {
@@ -39,7 +44,8 @@ public class Checkers extends JPanel {
         
         window.pack();
         Dimension screensize = Toolkit.getDefaultToolkit().getScreenSize();
-        window.setLocation( (screensize.width - window.getWidth())/2, (screensize.height - window.getHeight())/2 );
+        window.setLocation( (screensize.width - window.getWidth())/2,
+                (screensize.height - window.getHeight())/2 );
         window.setDefaultCloseOperation( JFrame.EXIT_ON_CLOSE );
         window.setResizable(false);
         window.setVisible(true);
@@ -51,18 +57,19 @@ public class Checkers extends JPanel {
     private JLabel message;  // Label for displaying messages to the user.
     private static JLabel premessage;
     
-    // Previous display
+    //Previous display
     static PreBoard previous = new PreBoard(); // Display previous board
-
     /**
-     * The constructor creates the Board (which in turn creates and manages the buttons and message label),
-     * adds all the components, and sets the bounds of the components.
-     * A null layout is used. (This is the only thing that is done in the main Checkers class.)
+     * The constructor creates the Board (which in turn creates and manages
+     * the buttons and message label), adds all the components, and sets
+     * the bounds of the components.  A null layout is used.  (This is
+     * the only thing that is done in the main Checkers class.)
      */
     public Checkers() {
+
         setLayout(null);  // I will do the layout myself.
-        //setPreferredSize(new Dimension(350,250) );
-        setPreferredSize(new Dimension(550,250) );
+        //setPreferredSize( new Dimension(350,250) );
+        setPreferredSize( new Dimension(550,250) );
         setBackground(new Color(0,150,0));  // Dark green background.
 
         /* Create the components and add them to the applet. */
@@ -79,9 +86,10 @@ public class Checkers extends JPanel {
         add(message);
         add(premessage);
 
-        // Set the position and size of each component by calling its setBounds() method.
+      /* Set the position and size of each component by calling
+       its setBounds() method. */
 
-        //board.setBounds(20,20,164,164); // Note: size MUST be 164-by-164 !
+        //board.setBounds(20,20,164,164); // Note:  size MUST be 164-by-164 !
         previous.setBounds(20,20,164,164);
         board.setBounds(230,20,164,164);
         
@@ -96,16 +104,19 @@ public class Checkers extends JPanel {
     } // end constructor
  
     /**
-     * This panel displays a 160-by-160 checkerboard pattern with a 2-pixel black border.
-     * It is assumed that the size of the panel is set to exactly 164-by-164 pixels.
-     * This class does the work of letting the users play checkers, and it displays the checkerboard.
+     * This panel displays a 160-by-160 checkerboard pattern with
+     * a 2-pixel black border.  It is assumed that the size of the
+     * panel is set to exactly 164-by-164 pixels.  This class does
+     * the work of letting the users play checkers, and it displays
+     * the checkerboard.
      */
     public static class PreBoard extends JPanel{
     	CheckersData preBoard;
     	CheckersMove moveAI;
     	//setBackground(Color.BLACK);
     	//boolean gameInProgress=true;
-    	PreBoard() {
+    	PreBoard()
+    	{
     		premessage = new JLabel("",JLabel.LEFT);
     		premessage.setFont(new  Font("Serif", Font.BOLD, 14));
     		premessage.setForeground(Color.green);
@@ -115,8 +126,8 @@ public class Checkers extends JPanel {
             moveAI = new CheckersMove();
             repaint();
     	}
-
-    	public void drawBoard(CheckersData currentBoard, CheckersMove move) {
+    	public void drawBoard(CheckersData currentBoard, CheckersMove move)
+    	{
     		premessage = new JLabel("",JLabel.LEFT);
     		premessage.setFont(new  Font("Serif", Font.BOLD, 14));
     		premessage.setForeground(Color.green);
@@ -125,8 +136,8 @@ public class Checkers extends JPanel {
     		moveAI = move.clone();
     		repaint();
     	}
-
-    	private CheckersData copyBoard(CheckersData board) {
+    	private CheckersData copyBoard(CheckersData board)
+        {
             this.preBoard = board;
             CheckersData new_board = new CheckersData();
             for(int i=0; i<board.board.length;i++)
@@ -178,9 +189,11 @@ public class Checkers extends JPanel {
             }
             
             // paint AI move on the left board
-            if(moveAI.rows.size() > 0) {
+            if(moveAI.rows.size() > 0)
+            {
             	g.setColor(Color.green);
-            	for(int i = 0; i < moveAI.rows.size(); i++) {
+            	for(int i = 0; i < moveAI.rows.size(); i++)
+            	{
             		g.drawRect(2 + moveAI.cols.get(i) * 20, 2 + moveAI.rows.get(i) * 20, 19, 19);
                     g.drawRect(3 + moveAI.cols.get(i) * 20, 3 + moveAI.rows.get(i) * 20, 17, 17);
             	}
@@ -223,16 +236,17 @@ public class Checkers extends JPanel {
             message.setFont(new  Font("Serif", Font.BOLD, 14));
             message.setForeground(Color.green);
             board = new CheckersData();
-            // Display board
+            //Display board
             displayBoard = new CheckersData();
             agentBoard = new CheckersData();
-            // Select the AI players.
+            //Select the AI players.
             decideAIplayer();
-            // Start new game
+            //Start new game
             doNewGame();
         }
 
-        public void decideAIplayer() {
+        public void decideAIplayer()
+        {
         	Scanner stdin = new Scanner(System.in);
     		boolean done = false;
         	player = new MonteCarloTreeSearch();

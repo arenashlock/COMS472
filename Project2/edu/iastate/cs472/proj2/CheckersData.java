@@ -1,5 +1,7 @@
 package edu.iastate.cs472.proj2;
 
+import java.util.ArrayList;
+
 /**
  * An object of this class holds data about a game of checkers.
  * It knows what kind of piece is on each square of the checkerboard.
@@ -184,9 +186,76 @@ public class CheckersData {
             return null;
         }
 
-        
+        // Use an ArrayList since the number of legal jumps is unknown
+        ArrayList<CheckersMove> legalMovesAL = new ArrayList<>();
 
-        return null;
+        // RED player
+        if(player == RED) {
+            for(int row = 0; row < 8; row++) {
+                for(int col = 0; col < 8; col++) {
+                    // Will check these 2 tiles for both normal and king pieces
+                    if(board[row][col] == RED) {
+                        if(col == 0) { // On the far left tile
+                            // Check if the square directly NW is empty
+                            if(board[row - 1][col + 1] == EMPTY) {
+                                legalMovesAL.add(new CheckersMove(row, col, row - 1, col + 1));
+                            }
+                        } else if(col == 7) { // On the far right side
+                            // Check if the square directly NE is empty
+                            if(board[row - 1][col - 1] == EMPTY) {
+                                legalMovesAL.add(new CheckersMove(row, col, row - 1, col - 1));
+                            }
+                        } else {
+                            // Check if the square directly NW is empty
+                            if(board[row - 1][col + 1] == EMPTY) {
+                                legalMovesAL.add(new CheckersMove(row, col, row - 1, col + 1));
+                            }
+                            // Check if the square directly NE is empty
+                            if(board[row - 1][col - 1] == EMPTY) {
+                                legalMovesAL.add(new CheckersMove(row, col, row - 1, col - 1));
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        // BLACK player
+        if(player == BLACK) {
+            for(int row = 0; row < 8; row++) {
+                for(int col = 0; col < 8; col++) {
+                    // Will check these 2 tiles for both normal and king pieces
+                    if(board[row][col] == BLACK) {
+                        if(col == 0) { // On the far left tile
+                            // Check if the square directly SW is empty
+                            if(board[row + 1][col + 1] == EMPTY) {
+                                legalMovesAL.add(new CheckersMove(row, col, row + 1, col + 1));
+                            }
+                        } else if(col == 7) { // On the far right side
+                            // Check if the square directly SE is empty
+                            if(board[row + 1][col - 1] == EMPTY) {
+                                legalMovesAL.add(new CheckersMove(row, col, row + 1, col - 1));
+                            }
+                        } else {
+                            // Check if the square directly SW is empty
+                            if(board[row + 1][col + 1] == EMPTY) {
+                                legalMovesAL.add(new CheckersMove(row, col, row + 1, col + 1));
+                            }
+                            // Check if the square directly SE is empty
+                            if(board[row + 1][col - 1] == EMPTY) {
+                                legalMovesAL.add(new CheckersMove(row, col, row + 1, col - 1));
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        // Convert ArrayList to an array (for the return type)
+        CheckersMove[] legalMoves = new CheckersMove[legalMovesAL.size()];
+        legalMovesAL.toArray(legalMoves);
+
+        return legalMoves;
     }
 
     /**
@@ -203,6 +272,34 @@ public class CheckersData {
      */
     CheckersMove[] getLegalJumpsFrom(int player, int row, int col) {
         // TODO 
-        return null;
+        // Use an ArrayList since the number of legal jumps is unknown
+        ArrayList<CheckersMove> legalJumpsAL = new ArrayList<>();
+
+        // Boolean for a king piece since those have extra jumps to check
+        boolean isKing = false;
+
+        // RED player
+        if(player == RED) {
+            if(board[row][col] == RED_KING) {
+                isKing = true;
+            }
+
+            // CHECK...
+        }
+
+        // BLACK player
+        if(player == BLACK) {
+            if(board[row][col] == BLACK_KING) {
+                isKing = true;
+            }
+
+            // CHECK...
+        }
+
+        // Convert ArrayList to an array (for the return type)
+        CheckersMove[] legalJumps = new CheckersMove[legalJumpsAL.size()];
+        legalJumpsAL.toArray(legalJumps);
+        
+        return legalJumps;
     }
 }
