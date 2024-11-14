@@ -67,7 +67,7 @@ public class CheckersData {
      * the last three rows contain red squares.
      */
     void setUpGame() {
-        // TODO - Done?
+        // TODO - Done
     	// Set up the board with pieces BLACK, RED, and EMPTY
         for(int row = 0; row < 8; row++) {
             for(int col = 0; col < 8; col++) {
@@ -117,7 +117,7 @@ public class CheckersData {
      * @param toCol   column index of the to square
      */
     void makeMove(int fromRow, int fromCol, int toRow, int toCol) {
-        // TODO - Done?
+        // TODO - Done
     	// Update the board for the given move. You need to take care of the following situations:
         // 1. move the piece from (fromRow,fromCol) to (toRow,toCol)
         // 2. if this move is a jump, remove the captured piece
@@ -180,7 +180,7 @@ public class CheckersData {
      * @param player color of the player, RED or BLACK
      */
     CheckersMove[] getLegalMoves(int player) {
-        // TODO - Done?
+        // TODO - Done
         // Not a valid player, return null
         if(player != RED && player != BLACK) {
             return null;
@@ -583,7 +583,7 @@ public class CheckersData {
      * @param col    col index of the start square.
      */
     CheckersMove[] getLegalJumpsFrom(int player, int row, int col) {
-        // TODO 
+        // TODO - Done
         // Use an ArrayList since the number of legal jumps is unknown
         ArrayList<CheckersMove> legalJumpsAL = new ArrayList<>();
 
