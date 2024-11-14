@@ -916,17 +916,558 @@ public class CheckersData {
 
         }
 
-
-
-
+        // Can check for no jumps available before consecutive since no jumps will never have consecutive jumps
         if(legalJumpsAL.size() == 0) {
             return null;
+        }
+
+        int i = 0;
+
+        while(i < legalJumpsAL.size()) {
+            // Get the current move of the ArrayList
+            CheckersMove currMove = legalJumpsAL.get(i);
+            int currRow = currMove.rows.getLast();
+            int currCol = currMove.cols.getLast();
+
+            // See if there are any consecutive jumps available
+            int[] consecutiveJumps = checkConsecutiveJumps(currMove, player);
+
+            // Keep track if there are further jumps from the currMove
+            boolean consecutiveExists = false;
+
+            // Piece can also jump NW
+            if(consecutiveJumps[0] == 1) {
+                // Get the current jump and add the consecutive jump to it
+                CheckersMove jumpNW = currMove.clone();
+                jumpNW.addMove(currRow - 2, currCol - 2);
+                legalJumpsAL.add(jumpNW);
+
+                // Change boolean since there is a consecutive jump
+                consecutiveExists = true;
+            }
+
+            // Piece can also jump NE
+            if(consecutiveJumps[1] == 1) {
+                // Get the current jump and add the consecutive jump to it
+                CheckersMove jumpNE = currMove.clone();
+                jumpNE.addMove(currRow - 2, currCol + 2);
+                legalJumpsAL.add(jumpNE);
+
+                // Change boolean since there is a consecutive jump
+                consecutiveExists = true;
+            }
+
+            // Piece can also jump SE
+            if(consecutiveJumps[2] == 1) {
+                // Get the current jump and add the consecutive jump to it
+                CheckersMove jumpSE = currMove.clone();
+                jumpSE.addMove(currRow + 2, currCol + 2);
+                legalJumpsAL.add(jumpSE);
+
+                // Change boolean since there is a consecutive jump
+                consecutiveExists = true;
+            }
+
+            // Piece can also jump SW
+            if(consecutiveJumps[3] == 1) {
+                // Get the current jump and add the consecutive jump to it
+                CheckersMove jumpSW = currMove.clone();
+                jumpSW.addMove(currRow + 2, currCol - 2);
+                legalJumpsAL.add(jumpSW);
+
+                // Change boolean since there is a consecutive jump
+                consecutiveExists = true;
+            }
+
+            if(consecutiveExists == true) {
+                // Remove the old jump (since there is a bigger jump available using that path)
+                legalJumpsAL.remove(i);
+                
+                // Move the index back since the jump was removed
+                i--;
+            }
+
+            // Move to the next jump
+            i++;
         }
 
         // Convert ArrayList to an array (for the return type)
         CheckersMove[] legalJumps = new CheckersMove[legalJumpsAL.size()];
         legalJumpsAL.toArray(legalJumps);
         
+        return legalJumps;
+    }
+
+    /**
+     * Helper method for finding consecutive jumps
+     */
+    int[] checkConsecutiveJumps(CheckersMove previousJumps, int player) {
+        // Reads NW, NE, SE, SW. Starts off as no jumps possible
+        int[] legalJumps = {0, 0, 0, 0};
+
+        // Keep track of where the piece has been (to prevent infinite loops of jumping back and forth)
+        int[][] pastPositions = new int[8][8];
+        for(int i = 0; i < previousJumps.rows.size(); i++) {
+            int indexRow = previousJumps.rows.get(i);
+            int indexCol = previousJumps.cols.get(i);
+
+            pastPositions[indexRow][indexCol] = 1;
+        }
+
+        // Get where the piece currently is
+        int lastRow = previousJumps.rows.getLast();
+        int lastCol = previousJumps.cols.getLast();
+
+        // King pieces have more possible jumps than normal pieces
+        boolean isKing = false;
+        
+        // We need where the piece was at first to know if it was already deemed a king or not
+        int firstRow = previousJumps.rows.getFirst();
+        int firstCol = previousJumps.cols.getFirst();
+
+        // Check if the piece is a king piece
+        if(board[firstRow][firstCol] == RED_KING || board[firstRow][firstCol] == BLACK_KING) {
+            isKing = true;
+        }
+
+        // Sometimes a piece becomes a king piece during a sequence of jumps, check if it reached the other end at all
+        else {
+            // Normal red piece reached the other end (at some point)
+            if(board[firstRow][firstCol] == RED && previousJumps.rows.contains(0)) {
+                isKing = true;
+            }
+
+            // Normal black piece reached the other end (at some point)
+            if(board[firstRow][firstCol] == BLACK && previousJumps.rows.contains(7)) {
+                isKing = true;
+            }
+        }
+
+                                // -------------------- RED PLAYER JUMPS --------------------
+        if(player == RED) {
+
+// ---------------------------------------- Get legal jumps for the normal red pieces ----------------------------------------
+
+            if(isKing == false) {
+                // Not in the top 2 rows (cannot legally jump if that's the case)
+                if(lastRow > 1) {
+                    // In the left 2 columns (can only jump right)
+                    if(lastCol < 2) {
+                        // Check if the square 2 tiles directly NE is empty and there's a black piece in between
+                        if(board[lastRow - 2][lastCol + 2] == EMPTY && (board[lastRow - 1][lastCol + 1] == BLACK || board[lastRow - 1][lastCol + 1] == BLACK_KING)) {
+                            legalJumps[1] = 1;
+                        }
+                    }
+
+                    // In the right 2 columns (can only jump left)
+                    else if(lastCol > 5) {
+                        // Check if the square 2 tiles directly NW is empty and there's a black piece in between
+                        if(board[lastRow - 2][lastCol - 2] == EMPTY && (board[lastRow - 1][lastCol - 1] == BLACK || board[lastRow - 1][lastCol - 1] == BLACK_KING)) {
+                            legalJumps[0] = 1;
+                        }
+                    }
+
+                    // In any other column (can jump right or left)
+                    else {
+                        // Check if the square 2 tiles directly NE is empty and there's a black piece in between
+                        if(board[lastRow - 2][lastCol + 2] == EMPTY && (board[lastRow - 1][lastCol + 1] == BLACK || board[lastRow - 1][lastCol + 1] == BLACK_KING)) {
+                            legalJumps[1] = 1;
+                        }
+
+                        // Check if the square 2 tiles directly NW is empty and there's a black piece in between
+                        if(board[lastRow - 2][lastCol - 2] == EMPTY && (board[lastRow - 1][lastCol - 1] == BLACK || board[lastRow - 1][lastCol - 1] == BLACK_KING)) {
+                            legalJumps[0] = 1;
+                        }
+                    }
+                }
+            }
+
+// ---------------------------------------------------------------------------------------------------------------------------
+
+// ---------------------------------------- Get legal jumps for the red king pieces ----------------------------------------
+
+            if(isKing == true) {
+                // In the left 2 cloumns (can only jump right)
+                if(lastCol < 2) {
+                    // In the top left corner (can only jump SE)
+                    if(lastRow < 2) {
+                        // Check if the square 2 tiles directly SE is empty and there's a black piece in between
+                        if(board[lastRow + 2][lastCol + 2] == EMPTY
+                        && (board[lastRow + 1][lastCol + 1] == BLACK || board[lastRow + 1][lastCol + 1] == BLACK_KING)
+                        && (pastPositions[lastRow + 2][lastCol + 2] == 0)
+                        ) {
+                            legalJumps[2] = 1;
+                        }
+                    }
+
+                    // In the bottom left corner (can only move NE)
+                    else if(lastRow > 5) {
+                        // Check if the square 2 tiles directly NE is empty and there's a black piece in between
+                        if(board[lastRow - 2][lastCol + 2] == EMPTY
+                        && (board[lastRow - 1][lastCol + 1] == BLACK || board[lastRow - 1][lastCol + 1] == BLACK_KING)
+                        && (pastPositions[lastRow - 2][lastCol + 2] == 0)
+                        ) {
+                            legalJumps[1] = 1;
+                        }
+                    }
+
+                    // Anywhere else in the left column (can move up or down)
+                    else {
+                        // Check if the square 2 tiles directly SE is empty and there's a black piece in between
+                        if(board[lastRow + 2][lastCol + 2] == EMPTY
+                        && (board[lastRow + 1][lastCol + 1] == BLACK || board[lastRow + 1][lastCol + 1] == BLACK_KING)
+                        && (pastPositions[lastRow + 2][lastCol + 2] == 0)
+                        ) {
+                            legalJumps[2] = 1;
+                        }
+
+                        // Check if the square 2 tiles directly NE is empty and there's a black piece in between
+                        if(board[lastRow - 2][lastCol + 2] == EMPTY
+                        && (board[lastRow - 1][lastCol + 1] == BLACK || board[lastRow - 1][lastCol + 1] == BLACK_KING)
+                        && (pastPositions[lastRow - 2][lastCol + 2] == 0)
+                        ) {
+                            legalJumps[1] = 1;
+                        }
+                    }
+                }
+
+                // In the right 2 columns (can only jump left)
+                else if(lastCol > 5) {
+                    // In the top right corner (can only jump SW)
+                    if(lastRow < 2) {
+                        // Check if the square 2 tiles directly SW is empty and there's a black piece in between
+                        if(board[lastRow + 2][lastCol - 2] == EMPTY
+                        && (board[lastRow + 1][lastCol - 1] == BLACK || board[lastRow + 1][lastCol - 1] == BLACK_KING)
+                        && (pastPositions[lastRow + 2][lastCol - 2] == 0)
+                        ) {
+                            legalJumps[3] = 1;
+                        }
+                    }
+
+                    // In the bottom right corner (can only move NW)
+                    else if(lastRow > 5) {
+                        // Check if the square 2 tiles directly NW is empty and there's a black piece in between
+                        if(board[lastRow - 2][lastCol - 2] == EMPTY
+                        && (board[lastRow - 1][lastCol - 1] == BLACK || board[lastRow - 1][lastCol - 1] == BLACK_KING)
+                        && (pastPositions[lastRow - 2][lastCol - 2] == 0)
+                        ) {
+                            legalJumps[0] = 1;
+                        }
+                    }
+
+                    // Anywhere else in the left column (can move up or down)
+                    else {
+                        // Check if the square 2 tiles directly SW is empty and there's a black piece in between
+                        if(board[lastRow + 2][lastCol - 2] == EMPTY
+                        && (board[lastRow + 1][lastCol - 1] == BLACK || board[lastRow + 1][lastCol - 1] == BLACK_KING)
+                        && (pastPositions[lastRow + 2][lastCol - 2] == 0)
+                        ) {
+                            legalJumps[3] = 1;
+                        }
+
+                        // Check if the square 2 tiles directly NW is empty and there's a black piece in between
+                        if(board[lastRow - 2][lastCol - 2] == EMPTY
+                        && (board[lastRow - 1][lastCol - 1] == BLACK || board[lastRow - 1][lastCol - 1] == BLACK_KING)
+                        && (pastPositions[lastRow - 2][lastCol - 2] == 0)
+                        ) {
+                            legalJumps[0] = 1;
+                        }
+                    }
+                }
+
+                // In the top 2 rows (can only jump down)
+                    // NOTE: won't be in a top corner since that's checked already!
+                else if(lastRow < 2) {
+                    // Check if the square 2 tiles directly SW is empty and there's a black piece in between
+                    if(board[lastRow + 2][lastCol - 2] == EMPTY
+                    && (board[lastRow + 1][lastCol - 1] == BLACK || board[lastRow + 1][lastCol - 1] == BLACK_KING)
+                    && (pastPositions[lastRow + 2][lastCol - 2] == 0)
+                    ) {
+                        legalJumps[3] = 1;
+                    }
+
+                    // Check if the square 2 tiles directly SE is empty and there's a black piece in between
+                    if(board[lastRow + 2][lastCol + 2] == EMPTY
+                    && (board[lastRow + 1][lastCol + 1] == BLACK || board[lastRow + 1][lastCol + 1] == BLACK_KING)
+                    && (pastPositions[lastRow + 2][lastCol + 2] == 0)
+                    ) {
+                        legalJumps[2] = 1;
+                    }
+                }
+
+                // In the bottom 2 rows (can only jump up)
+                    // NOTE: won't be in a top corner since that's checked already!
+                else if(lastRow > 5) {
+                    // Check if the square 2 tiles directly NW is empty and there's a black piece in between
+                    if(board[lastRow - 2][lastCol - 2] == EMPTY
+                    && (board[lastRow - 1][lastCol - 1] == BLACK || board[lastRow - 1][lastCol - 1] == BLACK_KING)
+                    && (pastPositions[lastRow - 2][lastCol - 2] == 0)
+                    ) {
+                        legalJumps[0] = 1;
+                    }
+
+                    // Check if the square 2 tiles directly NE is empty and there's a black piece in between
+                    if(board[lastRow - 2][lastCol + 2] == EMPTY
+                    && (board[lastRow - 1][lastCol + 1] == BLACK || board[lastRow - 1][lastCol + 1] == BLACK_KING)
+                    && (pastPositions[lastRow - 2][lastCol + 2] == 0)
+                    ) {
+                        legalJumps[1] = 1;
+                    }
+                }
+
+                // Anywhere else on the board (can jump in all 4 directions)
+                else {
+                    // Check if the square 2 tiles directly NW is empty and there's a black piece in between
+                    if(board[lastRow - 2][lastCol - 2] == EMPTY
+                    && (board[lastRow - 1][lastCol - 1] == BLACK || board[lastRow - 1][lastCol - 1] == BLACK_KING)
+                    && (pastPositions[lastRow - 2][lastCol - 2] == 0)
+                    ) {
+                        legalJumps[0] = 1;
+                    }
+
+                    // Check if the square 2 tiles directly NE is empty and there's a black piece in between
+                    if(board[lastRow - 2][lastCol + 2] == EMPTY
+                    && (board[lastRow - 1][lastCol + 1] == BLACK || board[lastRow - 1][lastCol + 1] == BLACK_KING)
+                    && (pastPositions[lastRow - 2][lastCol + 2] == 0)
+                    ) {
+                        legalJumps[1] = 1;
+                    }
+
+                    // Check if the square 2 tiles directly SW is empty and there's a black piece in between
+                    if(board[lastRow + 2][lastCol - 2] == EMPTY
+                    && (board[lastRow + 1][lastCol - 1] == BLACK || board[lastRow + 1][lastCol - 1] == BLACK_KING)
+                    && (pastPositions[lastRow + 2][lastCol - 2] == 0)
+                    ) {
+                        legalJumps[3] = 1;
+                    }
+
+                    // Check if the square 2 tiles directly SE is empty and there's a black piece in between
+                    if(board[lastRow + 2][lastCol + 2] == EMPTY
+                    && (board[lastRow + 1][lastCol + 1] == BLACK || board[lastRow + 1][lastCol + 1] == BLACK_KING)
+                    && (pastPositions[lastRow + 2][lastCol + 2] == 0)
+                    ) {
+                        legalJumps[2] = 1;
+                    }
+                }
+            }
+
+// -------------------------------------------------------------------------------------------------------------------------
+
+        }
+
+                                // -------------------- BLACK PLAYER JUMPS --------------------
+
+        else {
+
+// ---------------------------------------- Get legal jumps for the normal black pieces ----------------------------------------
+
+            if(isKing == false) {
+                // Not in the bottom 2 rows (cannot legally jump if that's the case)
+                if(lastRow < 6) {
+                    // In the left 2 columns (can only jump right)
+                    if(lastCol < 2) {
+                        // Check if the square 2 tiles directly SE is empty and there's a red piece in between
+                        if(board[lastRow + 2][lastCol + 2] == EMPTY && (board[lastRow + 1][lastCol + 1] == RED || board[lastRow + 1][lastCol + 1] == RED_KING)) {
+                            legalJumps[2] = 1;
+                        }
+                    }
+
+                    // In the right 2 columns (can only jump left)
+                    else if(lastCol > 5) {
+                        // Check if the square 2 tiles directly SW is empty and there's a red piece in between
+                        if(board[lastRow + 2][lastCol - 2] == EMPTY && (board[lastRow + 1][lastCol - 1] == RED || board[lastRow + 1][lastCol - 1] == RED_KING)) {
+                            legalJumps[3] = 1;
+                        }
+                    }
+
+                    // In any other column (can jump right or left)
+                    else {
+                        // Check if the square 2 tiles directly SE is empty and there's a red piece in between
+                        if(board[lastRow + 2][lastCol + 2] == EMPTY && (board[lastRow + 1][lastCol + 1] == RED || board[lastRow + 1][lastCol + 1] == RED_KING)) {
+                            legalJumps[2] = 1;
+                        }
+
+                        // Check if the square 2 tiles directly SW is empty and there's a red piece in between
+                        if(board[lastRow + 2][lastCol - 2] == EMPTY && (board[lastRow + 1][lastCol - 1] == RED || board[lastRow + 1][lastCol - 1] == RED_KING)) {
+                            legalJumps[3] = 1;
+                        }
+                    }
+                }
+            }
+
+// -----------------------------------------------------------------------------------------------------------------------------
+
+// ---------------------------------------- Get legal jumps for the black king pieces ----------------------------------------
+
+            if(isKing == true) {
+                // In the left 2 cloumns (can only jump right)
+                if(lastCol < 2) {
+                    // In the top left corner (can only jump SE)
+                    if(lastRow < 2) {
+                        // Check if the square 2 tiles directly SE is empty and there's a red piece in between
+                        if(board[lastRow + 2][lastCol + 2] == EMPTY
+                        && (board[lastRow + 1][lastCol + 1] == RED || board[lastRow + 1][lastCol + 1] == RED_KING)
+                        && (pastPositions[lastRow + 2][lastCol + 2] == 0)
+                        ) {
+                            legalJumps[2] = 1;
+                        }
+                    }
+
+                    // In the bottom left corner (can only move NE)
+                    else if(lastRow > 5) {
+                        // Check if the square 2 tiles directly NE is empty and there's a red piece in between
+                        if(board[lastRow - 2][lastCol + 2] == EMPTY
+                        && (board[lastRow - 1][lastCol + 1] == RED || board[lastRow - 1][lastCol + 1] == RED_KING)
+                        && (pastPositions[lastRow - 2][lastCol + 2] == 0)
+                        ) {
+                            legalJumps[1] = 1;
+                        }
+                    }
+
+                    // Anywhere else in the left column (can move up or down)
+                    else {
+                        // Check if the square 2 tiles directly SE is empty and there's a red piece in between
+                        if(board[lastRow + 2][lastCol + 2] == EMPTY
+                        && (board[lastRow + 1][lastCol + 1] == RED || board[lastRow + 1][lastCol + 1] == RED_KING)
+                        && (pastPositions[lastRow + 2][lastCol + 2] == 0)
+                        ) {
+                            legalJumps[2] = 1;
+                        }
+
+                        // Check if the square 2 tiles directly NE is empty and there's a red piece in between
+                        if(board[lastRow - 2][lastCol + 2] == EMPTY
+                        && (board[lastRow - 1][lastCol + 1] == RED || board[lastRow - 1][lastCol + 1] == RED_KING)
+                        && (pastPositions[lastRow - 2][lastCol + 2] == 0)
+                        ) {
+                            legalJumps[1] = 1;
+                        }
+                    }
+                }
+
+                // In the right 2 columns (can only jump left)
+                else if(lastCol > 5) {
+                    // In the top right corner (can only jump SW)
+                    if(lastRow < 2) {
+                        // Check if the square 2 tiles directly SW is empty and there's a red piece in between
+                        if(board[lastRow + 2][lastCol - 2] == EMPTY
+                        && (board[lastRow + 1][lastCol - 1] == RED || board[lastRow + 1][lastCol - 1] == RED_KING)
+                        && (pastPositions[lastRow + 2][lastCol - 2] == 0)
+                        ) {
+                            legalJumps[3] = 1;
+                        }
+                    }
+
+                    // In the bottom right corner (can only move NW)
+                    else if(lastRow > 5) {
+                        // Check if the square 2 tiles directly NW is empty and there's a red piece in between
+                        if(board[lastRow - 2][lastCol - 2] == EMPTY
+                        && (board[lastRow - 1][lastCol - 1] == RED || board[lastRow - 1][lastCol - 1] == RED_KING)
+                        && (pastPositions[lastRow - 2][lastCol - 2] == 0)
+                        ) {
+                            legalJumps[0] = 1;
+                        }
+                    }
+
+                    // Anywhere else in the left column (can move up or down)
+                    else {
+                        // Check if the square 2 tiles directly SW is empty and there's a red piece in between
+                        if(board[lastRow + 2][lastCol - 2] == EMPTY
+                        && (board[lastRow + 1][lastCol - 1] == RED || board[lastRow + 1][lastCol - 1] == RED_KING)
+                        && (pastPositions[lastRow + 2][lastCol - 2] == 0)
+                        ) {
+                            legalJumps[3] = 1;
+                        }
+
+                        // Check if the square 2 tiles directly NW is empty and there's a red piece in between
+                        if(board[lastRow - 2][lastCol - 2] == EMPTY
+                        && (board[lastRow - 1][lastCol - 1] == RED || board[lastRow - 1][lastCol - 1] == RED_KING)
+                        && (pastPositions[lastRow - 2][lastCol - 2] == 0)
+                        ) {
+                            legalJumps[0] = 1;
+                        }
+                    }
+                }
+
+                // In the top 2 rows (can only jump down)
+                    // NOTE: won't be in a top corner since that's checked already!
+                else if(lastRow < 2) {
+                    // Check if the square 2 tiles directly SW is empty and there's a red piece in between
+                    if(board[lastRow + 2][lastCol - 2] == EMPTY
+                    && (board[lastRow + 1][lastCol - 1] == RED || board[lastRow + 1][lastCol - 1] == RED_KING)
+                    && (pastPositions[lastRow + 2][lastCol - 2] == 0)
+                    ) {
+                        legalJumps[3] = 1;
+                    }
+
+                    // Check if the square 2 tiles directly SE is empty and there's a red piece in between
+                    if(board[lastRow + 2][lastCol + 2] == EMPTY
+                    && (board[lastRow + 1][lastCol + 1] == RED || board[lastRow + 1][lastCol + 1] == RED_KING)
+                    && (pastPositions[lastRow + 2][lastCol + 2] == 0)
+                    ) {
+                        legalJumps[2] = 1;
+                    }
+                }
+
+                // In the bottom 2 rows (can only jump up)
+                    // NOTE: won't be in a top corner since that's checked already!
+                else if(lastRow > 5) {
+                    // Check if the square 2 tiles directly NW is empty and there's a red piece in between
+                    if(board[lastRow - 2][lastCol - 2] == EMPTY
+                    && (board[lastRow - 1][lastCol - 1] == RED || board[lastRow - 1][lastCol - 1] == RED_KING)
+                    && (pastPositions[lastRow - 2][lastCol - 2] == 0)
+                    ) {
+                        legalJumps[0] = 1;
+                    }
+
+                    // Check if the square 2 tiles directly NE is empty and there's a red piece in between
+                    if(board[lastRow - 2][lastCol + 2] == EMPTY
+                    && (board[lastRow - 1][lastCol + 1] == RED || board[lastRow - 1][lastCol + 1] == RED_KING)
+                    && (pastPositions[lastRow - 2][lastCol + 2] == 0)
+                    ) {
+                        legalJumps[1] = 1;
+                    }
+                }
+
+                // Anywhere else on the board (can jump in all 4 directions)
+                else {
+                    // Check if the square 2 tiles directly NW is empty and there's a red piece in between
+                    if(board[lastRow - 2][lastCol - 2] == EMPTY
+                    && (board[lastRow - 1][lastCol - 1] == RED || board[lastRow - 1][lastCol - 1] == RED_KING)
+                    && (pastPositions[lastRow - 2][lastCol - 2] == 0)
+                    ) {
+                        legalJumps[0] = 1;
+                    }
+
+                    // Check if the square 2 tiles directly NE is empty and there's a red piece in between
+                    if(board[lastRow - 2][lastCol + 2] == EMPTY
+                    && (board[lastRow - 1][lastCol + 1] == RED || board[lastRow - 1][lastCol + 1] == RED_KING)
+                    && (pastPositions[lastRow - 2][lastCol + 2] == 0)
+                    ) {
+                        legalJumps[1] = 1;
+                    }
+
+                    // Check if the square 2 tiles directly SW is empty and there's a red piece in between
+                    if(board[lastRow + 2][lastCol - 2] == EMPTY
+                    && (board[lastRow + 1][lastCol - 1] == RED || board[lastRow + 1][lastCol - 1] == RED_KING)
+                    && (pastPositions[lastRow + 2][lastCol - 2] == 0)
+                    ) {
+                        legalJumps[3] = 1;
+                    }
+
+                    // Check if the square 2 tiles directly SE is empty and there's a red piece in between
+                    if(board[lastRow + 2][lastCol + 2] == EMPTY
+                    && (board[lastRow + 1][lastCol + 1] == RED || board[lastRow + 1][lastCol + 1] == RED_KING)
+                    && (pastPositions[lastRow + 2][lastCol + 2] == 0)
+                    ) {
+                        legalJumps[2] = 1;
+                    }
+                }
+            }
+
+// ---------------------------------------------------------------------------------------------------------------------------
+
+        }
+
         return legalJumps;
     }
 }
