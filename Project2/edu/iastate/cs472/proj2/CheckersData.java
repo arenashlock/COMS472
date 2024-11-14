@@ -595,7 +595,7 @@ public class CheckersData {
             if(board[row][col] == RED) {
                 // Not in the top 2 rows (cannot legally jump if that's the case)
                 if(row > 1) {
-                    // In the left 2 columns
+                    // In the left 2 columns (can only jump right)
                     if(col < 2) {
                         // Check if the square 2 tiles directly NE is empty and there's a black piece in between
                         if(board[row - 2][col + 2] == EMPTY && (board[row - 1][col + 1] == BLACK || board[row - 1][col + 1] == BLACK_KING)) {
@@ -603,7 +603,7 @@ public class CheckersData {
                         }
                     }
 
-                    // In the right 2 columns
+                    // In the right 2 columns (can only jump left)
                     else if(col > 5) {
                         // Check if the square 2 tiles directly NW is empty and there's a black piece in between
                         if(board[row - 2][col - 2] == EMPTY && (board[row - 1][col - 1] == BLACK || board[row - 1][col - 1] == BLACK_KING)) {
@@ -611,7 +611,7 @@ public class CheckersData {
                         }
                     }
 
-                    // In any other column (can move right or left)
+                    // In any other column (can jump right or left)
                     else {
                         // Check if the square 2 tiles directly NE is empty and there's a black piece in between
                         if(board[row - 2][col + 2] == EMPTY && (board[row - 1][col + 1] == BLACK || board[row - 1][col + 1] == BLACK_KING)) {
@@ -628,13 +628,293 @@ public class CheckersData {
 
 // ---------------------------------------------------------------------------------------------------------------------------
 
+// ---------------------------------------- Get legal jumps for the red king pieces ----------------------------------------
+
+            if(board[row][col] == RED_KING) {
+                // In the left 2 cloumns (can only jump right)
+                if(col < 2) {
+                    // In the top left corner (can only jump SE)
+                    if(row < 2) {
+                        // Check if the square 2 tiles directly SE is empty and there's a black piece in between
+                        if(board[row + 2][col + 2] == EMPTY && (board[row + 1][col + 1] == BLACK || board[row + 1][col + 1] == BLACK_KING)) {
+                            legalJumpsAL.add(new CheckersMove(row, col, row + 2, col + 2));
+                        }
+                    }
+
+                    // In the bottom left corner (can only move NE)
+                    else if(row > 5) {
+                        // Check if the square 2 tiles directly NE is empty and there's a black piece in between
+                        if(board[row - 2][col + 2] == EMPTY && (board[row - 1][col + 1] == BLACK || board[row - 1][col + 1] == BLACK_KING)) {
+                            legalJumpsAL.add(new CheckersMove(row, col, row - 2, col + 2));
+                        }
+                    }
+
+                    // Anywhere else in the left column (can move up or down)
+                    else {
+                        // Check if the square 2 tiles directly SE is empty and there's a black piece in between
+                        if(board[row + 2][col + 2] == EMPTY && (board[row + 1][col + 1] == BLACK || board[row + 1][col + 1] == BLACK_KING)) {
+                            legalJumpsAL.add(new CheckersMove(row, col, row + 2, col + 2));
+                        }
+
+                        // Check if the square 2 tiles directly NE is empty and there's a black piece in between
+                        if(board[row - 2][col + 2] == EMPTY && (board[row - 1][col + 1] == BLACK || board[row - 1][col + 1] == BLACK_KING)) {
+                            legalJumpsAL.add(new CheckersMove(row, col, row - 2, col + 2));
+                        }
+                    }
+                }
+
+                // In the right 2 columns (can only jump left)
+                else if(col > 5) {
+                    // In the top right corner (can only jump SW)
+                    if(row < 2) {
+                        // Check if the square 2 tiles directly SW is empty and there's a black piece in between
+                        if(board[row + 2][col - 2] == EMPTY && (board[row + 1][col - 1] == BLACK || board[row + 1][col - 1] == BLACK_KING)) {
+                            legalJumpsAL.add(new CheckersMove(row, col, row + 2, col - 2));
+                        }
+                    }
+
+                    // In the bottom right corner (can only move NW)
+                    else if(row > 5) {
+                        // Check if the square 2 tiles directly NW is empty and there's a black piece in between
+                        if(board[row - 2][col - 2] == EMPTY && (board[row - 1][col - 1] == BLACK || board[row - 1][col - 1] == BLACK_KING)) {
+                            legalJumpsAL.add(new CheckersMove(row, col, row - 2, col - 2));
+                        }
+                    }
+
+                    // Anywhere else in the left column (can move up or down)
+                    else {
+                        // Check if the square 2 tiles directly SW is empty and there's a black piece in between
+                        if(board[row + 2][col - 2] == EMPTY && (board[row + 1][col - 1] == BLACK || board[row + 1][col - 1] == BLACK_KING)) {
+                            legalJumpsAL.add(new CheckersMove(row, col, row + 2, col - 2));
+                        }
+
+                        // Check if the square 2 tiles directly NW is empty and there's a black piece in between
+                        if(board[row - 2][col - 2] == EMPTY && (board[row - 1][col - 1] == BLACK || board[row - 1][col - 1] == BLACK_KING)) {
+                            legalJumpsAL.add(new CheckersMove(row, col, row - 2, col - 2));
+                        }
+                    }
+                }
+
+                // In the top 2 rows (can only jump down)
+                    // NOTE: won't be in a top corner since that's checked already!
+                else if(row < 2) {
+                    // Check if the square 2 tiles directly SW is empty and there's a black piece in between
+                    if(board[row + 2][col - 2] == EMPTY && (board[row + 1][col - 1] == BLACK || board[row + 1][col - 1] == BLACK_KING)) {
+                        legalJumpsAL.add(new CheckersMove(row, col, row + 2, col - 2));
+                    }
+
+                    // Check if the square 2 tiles directly SE is empty and there's a black piece in between
+                    if(board[row + 2][col + 2] == EMPTY && (board[row + 1][col + 1] == BLACK || board[row + 1][col + 1] == BLACK_KING)) {
+                        legalJumpsAL.add(new CheckersMove(row, col, row + 2, col + 2));
+                    }
+                }
+
+                // In the bottom 2 rows (can only jump up)
+                    // NOTE: won't be in a top corner since that's checked already!
+                else if(row > 5) {
+                    // Check if the square 2 tiles directly NW is empty and there's a black piece in between
+                    if(board[row - 2][col - 2] == EMPTY && (board[row - 1][col - 1] == BLACK || board[row - 1][col - 1] == BLACK_KING)) {
+                        legalJumpsAL.add(new CheckersMove(row, col, row - 2, col - 2));
+                    }
+
+                    // Check if the square 2 tiles directly NE is empty and there's a black piece in between
+                    if(board[row - 2][col + 2] == EMPTY && (board[row - 1][col + 1] == BLACK || board[row - 1][col + 1] == BLACK_KING)) {
+                        legalJumpsAL.add(new CheckersMove(row, col, row - 2, col + 2));
+                    }
+                }
+
+                // Anywhere else on the board (can jump in all 4 directions)
+                else {
+                    // Check if the square 2 tiles directly NW is empty and there's a black piece in between
+                    if(board[row - 2][col - 2] == EMPTY && (board[row - 1][col - 1] == BLACK || board[row - 1][col - 1] == BLACK_KING)) {
+                        legalJumpsAL.add(new CheckersMove(row, col, row - 2, col - 2));
+                    }
+
+                    // Check if the square 2 tiles directly NE is empty and there's a black piece in between
+                    if(board[row - 2][col + 2] == EMPTY && (board[row - 1][col + 1] == BLACK || board[row - 1][col + 1] == BLACK_KING)) {
+                        legalJumpsAL.add(new CheckersMove(row, col, row - 2, col + 2));
+                    }
+
+                    // Check if the square 2 tiles directly SW is empty and there's a black piece in between
+                    if(board[row + 2][col - 2] == EMPTY && (board[row + 1][col - 1] == BLACK || board[row + 1][col - 1] == BLACK_KING)) {
+                        legalJumpsAL.add(new CheckersMove(row, col, row + 2, col - 2));
+                    }
+
+                    // Check if the square 2 tiles directly SE is empty and there's a black piece in between
+                    if(board[row + 2][col + 2] == EMPTY && (board[row + 1][col + 1] == BLACK || board[row + 1][col + 1] == BLACK_KING)) {
+                        legalJumpsAL.add(new CheckersMove(row, col, row + 2, col + 2));
+                    }
+                }
+            }
+
+// -------------------------------------------------------------------------------------------------------------------------
+
         }
 
+                                // -------------------- BLACK PLAYER JUMPS --------------------
 
+        else {
 
+// ---------------------------------------- Get legal jumps for the normal black pieces ----------------------------------------
 
-        // WRITE...
-        // Just doing single jumps for normal RED pieces tonight (just to test King moves)
+            if(board[row][col] == BLACK) {
+                // Not in the bottom 2 rows (cannot legally jump if that's the case)
+                if(row < 6) {
+                    // In the left 2 columns (can only jump right)
+                    if(col < 2) {
+                        // Check if the square 2 tiles directly SE is empty and there's a red piece in between
+                        if(board[row + 2][col + 2] == EMPTY && (board[row + 1][col + 1] == RED || board[row + 1][col + 1] == RED_KING)) {
+                            legalJumpsAL.add(new CheckersMove(row, col, row + 2, col + 2));
+                        }
+                    }
+
+                    // In the right 2 columns (can only jump left)
+                    else if(col > 5) {
+                        // Check if the square 2 tiles directly SW is empty and there's a red piece in between
+                        if(board[row + 2][col - 2] == EMPTY && (board[row + 1][col - 1] == RED || board[row + 1][col - 1] == RED_KING)) {
+                            legalJumpsAL.add(new CheckersMove(row, col, row + 2, col - 2));
+                        }
+                    }
+
+                    // In any other column (can jump right or left)
+                    else {
+                        // Check if the square 2 tiles directly SE is empty and there's a red piece in between
+                        if(board[row + 2][col + 2] == EMPTY && (board[row + 1][col + 1] == RED || board[row + 1][col + 1] == RED_KING)) {
+                            legalJumpsAL.add(new CheckersMove(row, col, row + 2, col + 2));
+                        }
+
+                        // Check if the square 2 tiles directly SW is empty and there's a red piece in between
+                        if(board[row + 2][col - 2] == EMPTY && (board[row + 1][col - 1] == RED || board[row + 1][col - 1] == RED_KING)) {
+                            legalJumpsAL.add(new CheckersMove(row, col, row + 2, col - 2));
+                        }
+                    }
+                }
+            }
+
+// -----------------------------------------------------------------------------------------------------------------------------
+
+// ---------------------------------------- Get legal jumps for the black king pieces ----------------------------------------
+
+            if(board[row][col] == BLACK_KING) {
+                // In the left 2 cloumns (can only jump right)
+                if(col < 2) {
+                    // In the top left corner (can only jump SE)
+                    if(row < 2) {
+                        // Check if the square 2 tiles directly SE is empty and there's a red piece in between
+                        if(board[row + 2][col + 2] == EMPTY && (board[row + 1][col + 1] == RED || board[row + 1][col + 1] == RED_KING)) {
+                            legalJumpsAL.add(new CheckersMove(row, col, row + 2, col + 2));
+                        }
+                    }
+
+                    // In the bottom left corner (can only move NE)
+                    else if(row > 5) {
+                        // Check if the square 2 tiles directly NE is empty and there's a red piece in between
+                        if(board[row - 2][col + 2] == EMPTY && (board[row - 1][col + 1] == RED || board[row - 1][col + 1] == RED_KING)) {
+                            legalJumpsAL.add(new CheckersMove(row, col, row - 2, col + 2));
+                        }
+                    }
+
+                    // Anywhere else in the left column (can move up or down)
+                    else {
+                        // Check if the square 2 tiles directly SE is empty and there's a red piece in between
+                        if(board[row + 2][col + 2] == EMPTY && (board[row + 1][col + 1] == RED || board[row + 1][col + 1] == RED_KING)) {
+                            legalJumpsAL.add(new CheckersMove(row, col, row + 2, col + 2));
+                        }
+
+                        // Check if the square 2 tiles directly NE is empty and there's a red piece in between
+                        if(board[row - 2][col + 2] == EMPTY && (board[row - 1][col + 1] == RED || board[row - 1][col + 1] == RED_KING)) {
+                            legalJumpsAL.add(new CheckersMove(row, col, row - 2, col + 2));
+                        }
+                    }
+                }
+
+                // In the right 2 columns (can only jump left)
+                else if(col > 5) {
+                    // In the top right corner (can only jump SW)
+                    if(row < 2) {
+                        // Check if the square 2 tiles directly SW is empty and there's a red piece in between
+                        if(board[row + 2][col - 2] == EMPTY && (board[row + 1][col - 1] == RED || board[row + 1][col - 1] == RED_KING)) {
+                            legalJumpsAL.add(new CheckersMove(row, col, row + 2, col - 2));
+                        }
+                    }
+
+                    // In the bottom right corner (can only move NW)
+                    else if(row > 5) {
+                        // Check if the square 2 tiles directly NW is empty and there's a red piece in between
+                        if(board[row - 2][col - 2] == EMPTY && (board[row - 1][col - 1] == RED || board[row - 1][col - 1] == RED_KING)) {
+                            legalJumpsAL.add(new CheckersMove(row, col, row - 2, col - 2));
+                        }
+                    }
+
+                    // Anywhere else in the left column (can move up or down)
+                    else {
+                        // Check if the square 2 tiles directly SW is empty and there's a red piece in between
+                        if(board[row + 2][col - 2] == EMPTY && (board[row + 1][col - 1] == RED || board[row + 1][col - 1] == RED_KING)) {
+                            legalJumpsAL.add(new CheckersMove(row, col, row + 2, col - 2));
+                        }
+
+                        // Check if the square 2 tiles directly NW is empty and there's a red piece in between
+                        if(board[row - 2][col - 2] == EMPTY && (board[row - 1][col - 1] == RED || board[row - 1][col - 1] == RED_KING)) {
+                            legalJumpsAL.add(new CheckersMove(row, col, row - 2, col - 2));
+                        }
+                    }
+                }
+
+                // In the top 2 rows (can only jump down)
+                    // NOTE: won't be in a top corner since that's checked already!
+                else if(row < 2) {
+                    // Check if the square 2 tiles directly SW is empty and there's a red piece in between
+                    if(board[row + 2][col - 2] == EMPTY && (board[row + 1][col - 1] == RED || board[row + 1][col - 1] == RED_KING)) {
+                        legalJumpsAL.add(new CheckersMove(row, col, row + 2, col - 2));
+                    }
+
+                    // Check if the square 2 tiles directly SE is empty and there's a red piece in between
+                    if(board[row + 2][col + 2] == EMPTY && (board[row + 1][col + 1] == RED || board[row + 1][col + 1] == RED_KING)) {
+                        legalJumpsAL.add(new CheckersMove(row, col, row + 2, col + 2));
+                    }
+                }
+
+                // In the bottom 2 rows (can only jump up)
+                    // NOTE: won't be in a top corner since that's checked already!
+                else if(row > 5) {
+                    // Check if the square 2 tiles directly NW is empty and there's a red piece in between
+                    if(board[row - 2][col - 2] == EMPTY && (board[row - 1][col - 1] == RED || board[row - 1][col - 1] == RED_KING)) {
+                        legalJumpsAL.add(new CheckersMove(row, col, row - 2, col - 2));
+                    }
+
+                    // Check if the square 2 tiles directly NE is empty and there's a red piece in between
+                    if(board[row - 2][col + 2] == EMPTY && (board[row - 1][col + 1] == RED || board[row - 1][col + 1] == RED_KING)) {
+                        legalJumpsAL.add(new CheckersMove(row, col, row - 2, col + 2));
+                    }
+                }
+
+                // Anywhere else on the board (can jump in all 4 directions)
+                else {
+                    // Check if the square 2 tiles directly NW is empty and there's a red piece in between
+                    if(board[row - 2][col - 2] == EMPTY && (board[row - 1][col - 1] == RED || board[row - 1][col - 1] == RED_KING)) {
+                        legalJumpsAL.add(new CheckersMove(row, col, row - 2, col - 2));
+                    }
+
+                    // Check if the square 2 tiles directly NE is empty and there's a red piece in between
+                    if(board[row - 2][col + 2] == EMPTY && (board[row - 1][col + 1] == RED || board[row - 1][col + 1] == RED_KING)) {
+                        legalJumpsAL.add(new CheckersMove(row, col, row - 2, col + 2));
+                    }
+
+                    // Check if the square 2 tiles directly SW is empty and there's a red piece in between
+                    if(board[row + 2][col - 2] == EMPTY && (board[row + 1][col - 1] == RED || board[row + 1][col - 1] == RED_KING)) {
+                        legalJumpsAL.add(new CheckersMove(row, col, row + 2, col - 2));
+                    }
+
+                    // Check if the square 2 tiles directly SE is empty and there's a red piece in between
+                    if(board[row + 2][col + 2] == EMPTY && (board[row + 1][col + 1] == RED || board[row + 1][col + 1] == RED_KING)) {
+                        legalJumpsAL.add(new CheckersMove(row, col, row + 2, col + 2));
+                    }
+                }
+            }
+
+// ---------------------------------------------------------------------------------------------------------------------------
+
+        }
 
 
 
