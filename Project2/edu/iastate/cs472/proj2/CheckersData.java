@@ -3,6 +3,10 @@ package edu.iastate.cs472.proj2;
 import java.util.ArrayList;
 
 /**
+ * @author Aren Ashlock
+ */
+
+/**
  * An object of this class holds data about a game of checkers.
  * It knows what kind of piece is on each square of the checkerboard.
  * Note that RED moves "up" the board (i.e. row number decreases) while BLACK moves "down" the board (i.e. row number increases).
