@@ -1,0 +1,151 @@
+\documentclass{article}
+\usepackage{graphicx} % Required for inserting images
+\usepackage{enumitem}
+\usepackage{xcolor}
+\usepackage{listings}
+\usepackage{mathtools}
+\usepackage{amsmath}
+\newcommand{\logicarg}[2]{% \logicarg{<premise>}{<conclusion>}
+  \begin{tabular}[t]{@{}l@{}}
+    #1 \\ \hline #2
+  \end{tabular}%
+}
+
+\setlength{\oddsidemargin}{-0.25in}
+\setlength{\topmargin}{-0.5in}
+\setlength{\headheight}{0cm}
+\setlength{\headsep}{0cm}
+\setlength{\textheight}{10in}
+\setlength{\textwidth}{7in}
+\setlength{\topskip}{0cm}
+
+\begin{document}
+
+\noindent\textbf{ComS 472 - PS9 \quad Due: Nov 17, 2024 \quad Name: Aren Ashlock}
+
+\begin{enumerate}
+
+% ------------------------------------- 1 DONE -------------------------------------
+
+\item \textbf{(10 pts)} (Exercise 13.16) Consider two medical tests, A and B, for a virus. Test A is 95\% effective at recognizing the virus when it is present, but has a 10\% false positive rate (indicating that the virus is present, when it is not). Test B is 90\% effective at recognizing the virus, but has a 5\% false positive rate. The two tests use independent methods of identifying the virus. The virus is carried by 1\% of all people. Say that a person is tested for the virus using only one of the tests, and that test comes back positive for carrying the virus. Which test returning positive is more indicative of someone really carrying the virus? Justify your answer mathematically.
+
+[Let $V$ be the statement that the patient has the virus, and let $v$ and $\neg v$ stand for $V$ = True and $V$ = False, respectively. Let $A$ and $B$ be respectively the statements that the outcomes of the medical tests A and B are positive, and $a, \neg a, b, \neg b$ be their truth values.]
+
+\color{blue}
+    \textbf{Knowledge:}\\
+    $P(v) = 0.01$, $P(a|v) = 0.95$, $P(a|\neg v)=0.10$, $P(b|v)=0.90$, $P(b|\neg v)=0.05$\\
+    \textbf{Additional knowledge:}\\
+    $P(a)=P(a|v)P(v)+P(a|\neg v)P(\neg v)=0.95*0.01+0.10*0.99=0.1085$\\
+    $P(b)=P(b|v)P(v)+P(b|\neg v)P(\neg v)=0.90*0.01+0.05*0.99=0.0585$\\
+    \textbf{Solve:}\\
+    $P(v|a)=\frac{P(a|v)P(v)}{P(a)}=\frac{0.95*0.01}{0.1085}=0.0876$\\
+    $P(v|b)=\frac{P(b|v)P(v)}{P(b)}=\frac{0.90*0.01}{0.0585}=0.1538$\\
+    \textbf{Answer:} Given someone actually has the virus, test A will return positive 8.76\% of the time while test B will return positive 15.38\% of the time. Therefore, test B is more indicative of someone really carrying the virus.
+\color{black}
+
+% ----------------------------------------------------------------------------------
+
+% ------------------------------------- 2 DONE -------------------------------------
+
+\item \textbf{(12 pts)} (Exercise 13.18) After your yearly checkup, the doctor has bad news and good news. The bad news is that you tested positive for a serious disease and that the test is 99\% accurate (i.e., the probability of testing positive when you do have the disease is 0.99, as is the probability of testing
+negative when you don’t have the disease). The good news is that this is a rare disease, striking only 1 in 10,000 people of your age. Why is it good news that the disease is rare? What are the chances that you actually have the disease?
+
+[Use the random variable $Positive$ to represent the test outcome, with values $positive$ and $\neg positive$. Use the random variable $Disease$ with values $disease$ for having the disease and $\neg disease$ for not.]
+
+\color{blue}
+    \textbf{Knowledge:}\\
+    $P(positive|disease)=0.99$, $P(\neg positive|\neg disease)=0.99$, $P(disease)=0.0001$\\
+    \textbf{Additional knowledge:}\\
+    $P(positive)=P(positive|disease)P(disease)+P(positive|\neg disease)P(\neg disease)$\\$=0.99*0.0001+0.01*0.9999=0.010098$\\
+    \textbf{Solve:}\\
+    $P(disease|positive)=\frac{P(positive|disease)P(disease)}{P(positive)}=\frac{0.99*0.0001}{0.010098}=0.0098$\\
+    \textbf{Answer:} This is good news that the disease is rare since that means even though it came back positive, the chance you actually have the disease is really small. The chance is 0.98\%, so a VERY small chance!
+\color{black}
+
+% ----------------------------------------------------------------------------------
+
+% ------------------------------------- 3 DONE -------------------------------------
+
+\item \textbf{(13 pts)} (Exercise 13.22) Suppose you are given a bag containing $n$ unbiased coins. You are told that $n - 1$ of these coins are normal, with heads on one side and tails on the other, whereas one coin is a fake, with heads on both sides. [Use two random variables $Head$ and $Fake$.]
+
+    \begin{enumerate}[label=($\alph*$)]
+
+    % ----------------------------------- 3a DONE -----------------------------------
+
+    \item \textbf{(5 pts)} Suppose you reach into the bag, pick out a coin at random, flip it, and get a head. What is the (conditional) probability that the coin you chose is the fake coin?
+
+    \color{blue}
+        $P(head)=1(\frac{1}{n})+(\frac{1}{2})(\frac{n-1}{n})=\frac{(1+n/2-1/2)}{n}=\frac{n/2+1/2}{n}=\frac{n+1}{2n}$\\
+        $\alpha=\frac{1}{P(head)}=\frac{2n}{n+1}$\\
+        $P(fake|head)=\alpha P(head|fake)P(fake)=\frac{2n}{n+1}(1)(\frac{1}{n})=\frac{2}{n+1}$\\
+        \textbf{Answer:} $\frac{2}{n+1}$
+    \color{black}
+
+    % -------------------------------------------------------------------------------
+
+    % ----------------------------------- 3b DONE -----------------------------------
+
+    \item \textbf{(5 pts)} Suppose you continue flipping the coin for a total of $k$ times after picking it and see $k$ heads. Now what is the conditional probability that you picked the fake coin?
+
+    \color{blue}
+        $P(head_k)=(1)^k(\frac{1}{n})+(\frac{1}{2})^k(\frac{n-1}{n})=\frac{1+(1/2^k)(n-1)}{n}$\\
+        $\alpha=\frac{1}{P(head_k)}=\frac{n}{1+(1/2^k)(n-1)}$\\
+        $P(fake|head_k)=\alpha P(head_k|fake)P(fake)=\frac{n}{1+(1/2^k)(n-1)}(1)(\frac{1}{n})=\frac{1}{1+(1/2^k)(n-1)}=\frac{2^k}{2^k+n-1}$\\
+        \textbf{Answer:} $\frac{2^k}{2^k+n-1}$
+    \color{black}
+
+    % -------------------------------------------------------------------------------
+
+    % ----------------------------------- 3c DONE -----------------------------------
+
+    \item \textbf{(3 pts)} Suppose you wanted to decide whether the chosen coin was fake by flipping it $k$ times. The decision procedure returns $fake$ if all $k$ flips come up heads; otherwise it returns $normal$ (i.e., $\neg fake$). What is the (unconditional) probability that this procedure makes an error?
+
+    \color{blue}
+        $P(head_k\wedge \neg fake)=P(head_k|\neg fake)P(\neg fake)=(\frac{1}{2})^k(\frac{n-1}{n})=\frac{n-1}{2^kn}$\\
+        \textbf{Answer:} $\frac{n-1}{2^kn}$
+    \color{black}
+
+    % -------------------------------------------------------------------------------
+    
+    \end{enumerate}
+
+% ----------------------------------------------------------------------------------
+
+% ------------------------------------- 4 DONE -------------------------------------
+
+\item \textbf{(10 pts)} (Exercise 13.26) Suppose you are a witness to a nighttime hit-and-run accident involving a taxi in Athens. All taxis in Athens are blue or green. You swear, under oath, that the taxi was blue. Extensive testing shows that, under the dim lighting conditions, discrimination between blue and green is 75\% reliable
+
+    \begin{enumerate}[label=($\alph*$)]
+
+    % ----------------------------------- 4a DONE -----------------------------------
+
+    \item \textbf{(5 pts)}  Is it possible to calculate the most likely color for the taxi? [\textbf{Hint}: distinguish carefully between the proposition that the taxi *is* blue and the proposition that it *appears* blue.]
+
+    \color{blue}
+        It is \textbf{not possible} to calculate the most likely color for the taxi. There needs to be knowledge about how many of the taxis are blue (which also gives us information as to how many taxis are green). If we knew that, we could then figure out the chance that the taxi looks blue and is in fact blue vs the chance the taxi looks blue but is actually green.
+    \color{black}
+
+    % -------------------------------------------------------------------------------
+
+    % ----------------------------------- 4b DONE -----------------------------------
+
+    \item \textbf{(5 pts)} What if you know that 9 out of 10 Athenian taxis are green?
+
+    \color{blue}
+        For finding probabilities, $\alpha$ will be the same, which is $\frac{1}{P(appears)}$:\\
+        $P(appears)=P(appears|blue)P(blue)+P(appears|\neg blue)P(\neg blue)=0.75(0.1)+0.25(0.9)=0.3$\\
+        \textbf{BLUE: 25\%}\\
+        $P(blue|appears)=\alpha P(appears|blue)P(blue)=\frac{0.75(0.1)}{0.3}=0.25$\\
+        \textbf{GREEN: 75\%}\\
+        $P(\neg blue|appears)=\alpha P(appears|\neg blue)P(\neg blue)=\frac{0.25(0.9)}{0.3}=0.75$\\
+        \textbf{Answer:} The most likely color for the taxi is green
+    \color{black}
+
+    % -------------------------------------------------------------------------------
+    
+    \end{enumerate}
+
+% ----------------------------------------------------------------------------------
+
+\end{enumerate}
+\end{document}
